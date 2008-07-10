@@ -1,0 +1,9 @@
+﻿int return code (usually):
+0 - success
+-1 - user cancel
+-2 - other
+>0 - error
+
+naming scheme:
+public stuff - capitalize every word, no underscore
+private stuff - lower case, underscore to separate word, and/or starting with underscore
