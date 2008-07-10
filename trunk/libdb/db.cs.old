@@ -1,0 +1,590 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Data.SqlClient;
+using System.Text;
+
+namespace libdb
+{
+    public class db
+    {
+    #region data scheme/structure
+		
+        /* To add a table:
+           1. add its name to the end of tables enum 
+           2. add all its fields to the end of _fields array
+           3. add the informations about it in the _tables array
+           4. add a new enum with all its fields with values corresponding to the
+              indexes in the _fields array
+           5. add its relationships to the _relationship array
+         
+          To add a new field to an existing table:
+          1. replace the placeholder (null) entry with new information 
+             in the _fields array right after the last field of the table 
+          2. if there is no more placeholders, shift the array to make room; 
+             REMEMBER to update all table enums to the correct indexes after shift
+          3. add the field to the end of the enum for the table */
+
+
+        #region  table enums
+        public enum tables
+        {
+            album = 0,
+            artist,
+            artist_name,
+            artist_type,
+            genre,
+            id_redirection,
+            label,
+            piece,
+            track
+        }
+        public enum album
+        {
+            id = 0,
+            name,
+            location,
+            type,
+            totaldisc,
+            totaltrack,
+            complete,
+            labelid,
+            inipod,
+            comment,
+            artistid,
+            needupdate,
+            createddate,
+            modifieddate
+        }
+        public enum artist
+        {
+            id = 18,
+            nameid,
+            typeid,
+            createddate,
+            modifieddate,
+        }
+        public enum artistName
+        {
+            id = 27,
+            main,
+            other,
+            altmain,
+            altother,
+            createddate,
+            modifieddate,
+        }
+        public enum artistType
+        {
+            id = 38,
+            name,
+            createddate,
+            modifieddate,
+        }
+        public enum genre
+        {
+            id = 46,
+            name,
+        }
+        public enum idRedirection
+        {
+            id,
+            oldtblname,
+            oldid,
+            newid,
+            createddate,
+        }
+        public enum label
+        {
+            id,
+            name,
+            createddate,
+            modifieddate,
+        }
+        public enum piece
+        {
+            id,
+            primaryid,
+            name,
+            oldname,
+            connector,
+            composerid,
+            genreid,
+            detail,
+            extra,
+            text,
+            createddate,
+            modifieddate,
+        }
+        #endregion
+        #region database scheme
+
+
+        public struct _tbl
+        {
+            public string name;
+            public string primary_key;
+            public int start; //where in _fields do the fields belonging to this tbl start?
+            public int field_count;
+
+            public _tbl(string name, string primaryKey, int start,
+                        int field_count)
+            {
+                this.name = name;
+                this.primary_key = primaryKey;
+                this.field_count = field_count;
+                this.start = start;
+            }
+        }
+
+        public struct _fld
+        {
+            public tables table;
+            public string name;
+            public bool nullable;
+            public Type type;
+
+            public _fld(tables table, string name, bool nullable,
+                        Type type)
+            {
+                this.table = table;
+                this.name = name;
+                this.nullable = nullable;
+                this.type = type;
+            }
+        }
+
+        public struct _rel
+        {
+            tables table;
+            tables foreign_key_table;
+            int foreign_key_field;
+
+            public _rel(tables table, tables foreign_key_table,
+                         int foreign_key_field)
+            {
+                this.table = table;
+                this.foreign_key_field = foreign_key_field;
+                this.foreign_key_table = foreign_key_table;
+            }
+
+        }
+
+        private static readonly _tbl[] _tables = {
+              new _tbl("tblAlbum",        "AlbumID",        0,   14),
+              new _tbl("tblArtist",       "ArtistID",       18,  5 ),
+              new _tbl("tblAlbum",        "AlbumID",        0,   14),
+
+                                                  };
+
+        private static readonly _rel[] _relationships = {
+            new _rel(tables.album,          tables.label,            (int) album.labelid),
+            new _rel(tables.album,          tables.artist,           (int) artist.id),
+
+            };
+
+        private static readonly _fld?[] _fields = {
+            new _fld (tables.album,         "AlbumID",           false,  typeof(int)     ), //0
+            new _fld (tables.album,         "AlbumName",         false,  typeof(string)  ),
+            new _fld (tables.album,         "AlbumLocation",     false,  typeof(string)  ),
+            new _fld (tables.album,         "AlbumType",         false,  typeof(int)     ),
+            new _fld (tables.album,         "TotalDisc",         false,  typeof(int)     ),
+            new _fld (tables.album,         "TotalTrack",        false,  typeof(string)  ),
+            new _fld (tables.album,         "Complete",          false,  typeof(bool)    ),
+            new _fld (tables.album,         "LabelID",           true,   typeof(int)     ),
+            new _fld (tables.album,         "InIPOD",            false,  typeof(bool)    ),
+            new _fld (tables.album,         "CDComment",         true ,  typeof(string)  ),
+            new _fld (tables.album,         "AlbumArtistID",     false,  typeof(int)     ),
+            new _fld (tables.album,         "NeedUpdate",        false,  typeof(bool)    ),
+            new _fld (tables.album,         "CreatedDate",       true ,  typeof(DateTime)),
+            new _fld (tables.album,         "ModifiedDate",      false,  typeof(DateTime)),
+            null,    //placeholders for later expansion
+            null,
+            null,
+            null,
+            new _fld (tables.artist,        "ArtistID",           false, typeof(int)     ), //18
+            new _fld (tables.artist,        "ArtistNameID",       false, typeof(int)     ), 
+            new _fld (tables.artist,        "ArtistTypeID",       false, typeof(int)     ), 
+            new _fld (tables.artist,        "CreatedDate",        true , typeof(DateTime)),
+            new _fld (tables.artist,        "ModifiedDate",       false, typeof(DateTime)),
+            null,    //placeholders for later expansion
+            null,
+            null,
+            null,
+            new _fld (tables.artist_name,    "ArtistNameID",       false, typeof(int)     ), //27
+            new _fld (tables.artist_name,    "ArtistMainName",     false, typeof(string)  ), 
+            new _fld (tables.artist_name,    "ArtistOtherName",    true,  typeof(string)  ), 
+            new _fld (tables.artist_name,    "ArtistAlternateMainName",true, typeof(string)  ), 
+            new _fld (tables.artist_name,    "ArtistAlternateOtherName",true, typeof(string)  ), 
+            new _fld (tables.artist_name,    "CreatedDate",        true , typeof(DateTime)),
+            new _fld (tables.artist_name,    "ModifiedDate",       false, typeof(DateTime)),
+            null,    //placeholders for later expansion
+            null,
+            null,
+            null,
+            new _fld (tables.artist_type,    "ArtistTypeID",       false, typeof(int)     ), //38
+            new _fld (tables.artist_type,    "ArtistTypeName",     false, typeof(string)  ), 
+            new _fld (tables.artist_type,    "CreatedDate",        true , typeof(DateTime)),
+            new _fld (tables.artist_type,    "ModifiedDate",       false, typeof(DateTime)),
+            null,    //placeholders for later expansion
+            null,
+            null,
+            null,
+            new _fld (tables.genre,         "GenreID",            false, typeof(int)     ), //46
+            new _fld (tables.genre,         "GenreName",          false, typeof(string)  ), 
+            null,    //placeholders for later expansion
+            null,
+            new _fld (tables.id_redirection, "ID",                 false, typeof(int)     ), //50
+
+                                                  };
+
+        #endregion
+
+        private static readonly string[] _sqloperator = {
+                 " = "," != "," > ", " < ", " >= ", " <= "," LIKE "," ON "};
+        public enum sqloperator
+        {
+            equal,
+            notequal,
+            greater,
+            less,
+            greaterequal,
+            lessequal,
+            like,
+            //on, TODO: find a better way to implement ON
+        }
+
+        public struct field_data
+        {
+            int _field;
+            object _data;
+
+            public int field { get {return _field;}}
+            public object data { 
+                get {return _data;}
+                set {
+                    if (value.GetType().Name != getDataType(field).Name)
+                        throw new InvalidOperationException("Wrong datatype assigned to a field");
+                    _data = value; }
+            }
+            
+            public field_data(int field, object data)
+            {
+                
+                _field = field;
+                _data = data;
+            }
+            public field_data(int field)
+            {
+                _field = field;
+                _data = null;
+            }
+        }
+
+        /* node for an basic linked list (with child node) design
+         * clause (c1 AND (c3 OR c4)) can be joined as
+         * new clause(f1,d1,o1) & new clause(new clause(f3,o3,d3) | new clause(f4,o4,d4)) */
+        public class clause
+        {
+            private static readonly string[] _optr = { " AND ", " OR " };
+            private enum logical_operator { and, or }
+
+            private field_data _field_data;
+            private clause _child;
+            private clause _next;
+            private clause _previous;
+            private sqloperator _operator;
+            private logical_operator _next_operator;
+            
+            public int field {get { return _field_data.field; }}
+            public object data { get { return _field_data.data; } }
+            
+            public clause(int field, sqloperator optr, object data)
+	        {
+                _field_data = new field_data(field, data);
+                _operator = optr;
+                _previous = null;
+                _next = null;
+                _child = null;
+            }
+
+            public clause(clause child_clause)
+            {
+                _child = child_clause;
+                _next = null;
+                _previous = null;
+            }
+
+            public static clause operator &(clause c1, clause c2)
+            {
+                c1._next = c2;
+                c1._next_operator = logical_operator.and;
+                c2._previous = c1;
+                return c2;
+            }
+            
+            public static clause operator |(clause c1, clause c2)
+            {
+                c1._next = c2;
+                c1._next_operator = logical_operator.or;
+                c2._previous = c1;
+                return c2;
+            }
+            /// <summary>
+            /// Get a properly sql formatted condition string for the WHERE clause
+            /// with all the linked clauses
+            /// </summary>
+            /// <returns></returns>
+            public override string ToString()
+            {
+                clause cur = this;
+                StringBuilder strb = new StringBuilder();
+
+                // find the beginning of the linked list
+                while (cur._previous != null)
+                    cur = cur._previous;
+
+                /* loop through each linked clause, extract the information
+                 * join with appropriate AND or OR to the stringbuilder
+                 * put parenthesis around each clause with child clause */
+                do
+                {
+                    if (cur._child == null)
+                    {
+                        string value; // format the value if neccesary
+                        if (getDataType(cur.field) == typeof(string))
+                            value = "'" + cur.data.ToString().Replace("'", "''") + "'";
+                        else
+                            value = cur.data.ToString();
+
+                        strb.Append(getName(cur.field) +
+                             _sqloperator[(int)cur._operator] + value);
+                    }
+                    else
+                        strb.Append("(" + cur._child.ToString() + ")");
+
+                    if (cur._next != null)
+                        strb.Append(_optr[(int)cur._next_operator]);
+
+                    cur = cur._next;
+                } while (cur != null);
+
+                return strb.ToString();
+            }
+        }
+
+        
+        
+
+        static string getName(int field)
+        {
+            if (_fields[field].HasValue == false)
+                throw new InvalidOperationException(str.EXCEPTION_NULL_FIELDHOLDER);
+            return _fields[field].Value.name;
+        }
+
+        static Type getDataType(int field)
+        {
+            if (_fields[field].HasValue == false)
+                throw new InvalidOperationException(str.EXCEPTION_NULL_FIELDHOLDER);
+            return _fields[field].Value.type;
+        }
+
+        static bool buildTableString(ref StringBuilder str, IEnumerable<int> fields,
+                                     clause additional_clauses)
+        {
+
+            return true;   
+        } 
+	#endregion
+
+        static string connstr = "";
+        static bool do_not_disconnect = false;
+        static SqlConnection conn = new SqlConnection(connstr);
+
+
+        private static int connect()
+        {
+            try
+            {
+                if (conn.State != System.Data.ConnectionState.Open)
+                    conn.Open();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+                return -1;
+            }
+            finally
+            {
+                disconnect();
+            }
+            
+            return 0;
+        }
+
+        private static int disconnect()
+        {
+            try
+            {
+                if (conn.State != System.Data.ConnectionState.Closed)
+                    conn.Close();
+            }
+            catch (Exception ex)
+            {
+                return -1;
+            }
+            return 0;
+        }
+
+        public static int FillData(string strSQL, FillDataCallback fillCallBack, 
+                            ref object dataStructure, bool optimizedForOneResult)
+        {
+            if (fillCallBack == null)
+                return -1;
+            try 
+	        {
+                int row = 0;
+                connect();
+                SqlCommand cmd = new SqlCommand(strSQL, conn);
+                SqlDataReader dr = cmd.ExecuteReader(optimizedForOneResult?
+                    System.Data.CommandBehavior.SingleResult : System.Data.CommandBehavior.Default);
+                if (!dr.HasRows)
+                    return -1;
+
+                do
+	            {
+                    for (int i = 0; i < dr.FieldCount; i++)
+                    {
+                        if (fillCallBack(row, i, dr.GetValue(i), ref dataStructure) < 0) 
+                            return 0; //callback func requests termination
+                    }
+                    row++;
+	            } while (dr.Read());
+            }
+	        finally
+	        {
+                disconnect();
+	        }
+            return 0;
+        }
+        public static int FillData(string strSQL, FillDataCallback fillCallBack, ref object dataStructure)
+        {
+            return FillData(strSQL, fillCallBack, ref dataStructure, false);
+        }
+
+        /// <summary>
+        /// Callback for FillData. Return 0 to continue read; -1 to terminate read
+        /// </summary>
+        public static delegate int FillDataCallback(int rowNum, int colNum, object data, ref object dataStrucure);
+
+
+        private static int getscalars_callback(int rowNum, int colNum, object data, ref object dataStrucure)
+        {
+            if (rowNum >= 1) return -1; //break read; only one row needed
+            field_data[] fds = (field_data[])dataStrucure;
+            fds[colNum].data = data;
+            return 0;
+        }
+
+        /// <summary>
+        /// Get values from the first matching record met the specified conditions.
+        /// </summary>
+        /// <param name="sortbyfields">An ordered array of field enums. use negative "-"
+        /// to indicate sorting desc. </param>
+        public static bool GetScalars(clause condition, int[] sortbyfields, ref field_data[] fds)
+        {
+            List<int> fields = new List<int>(); 
+            StringBuilder select = new StringBuilder(),
+                          from = new StringBuilder(),
+                          sort_by = new StringBuilder();
+            string        where, 
+                          strSQL;
+            bool sort_desc = false;
+
+            foreach (field_data fd in fds)
+            {
+                fields.Add(fd.field);
+                select.Append(((select.Length != 0) ? ", " : "") +
+                              getName(fd.field));
+            }
+
+            foreach (int i in sortbyfields)
+            {
+                int fld = Math.Abs(i);
+                sort_desc = (i < 0);
+                
+                sort_by.Append(((sort_by.Length != 0) ? ", " : "") +
+                                getName(fld) + //will throw error if fld is invalid
+                                ((sort_desc) ? " DESC" : " ASC")); 
+
+                fields.Add(fld);                
+            }
+
+            where = condition.ToString();
+            if (!buildTableString(ref from,fields,condition))
+                throw new InvalidOperationException(str.EXCEPTION_NO_TABLE_RELATIONSHIP);
+
+            strSQL = "SELECT " + select.ToString + 
+                     " FROM " + from.ToString() + 
+                    ((where == null || where == "")? ("") : (" WHERE (" + where + ")")) + 
+                    ((sort_by.Length <= 0)? ("") : (" ORDER BY " + sort_by.ToString()));
+
+            Console.WriteLine(strSQL);
+
+            return (FillData(strSQL, new FillDataCallback(getscalars_callback), ref fds) >= 0);
+        }
+      
+    }
+    enum objstate
+    {
+        unknown,
+        create,
+        update,
+        delete,
+    }
+
+    interface IDBObj:ICloneable
+    {
+        IDBObj create(int id);
+    }
+
+    class artist
+    {
+        private string _main_name;
+        private string _other_name;
+        private int _type;
+
+        public string MainName
+        {
+            get { return main_name; }
+            set { main_name = value; }
+        }
+
+        public string OtherName
+        {
+            get { return other_name; }
+            set { other_name = value; }
+        }
+
+        public int Type
+        {
+            get { return type; }
+            set { type = value; }
+        }
+
+        public artist(int artistID)
+        {
+
+        }
+	
+        public IDBObj create(int artistid)
+        {
+            return new artist();
+        }
+        public object Clone()
+        {
+            return new artist();
+        }
+    }
+}
