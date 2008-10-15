@@ -124,11 +124,7 @@ namespace MusicLib
                     dg.Rows[dg.CurrentRow.Index].Selected = true;
                 }
             };
-            dg.SelectionChanged += (sender, e) =>
-            {
-                if (IsScrolling) return;
-                UpdateDetail();
-            };
+            dg.SelectionChanged += (sender, e) => { if (!IsScrolling) UpdateDetail(); };
             dg.GotFocus += (sender, e) => 
             { 
                 if (dg.SelectedRows.Count == 0) //auto select first row if nothing is already selected
@@ -426,7 +422,7 @@ namespace MusicLib
         private void change_status(string status,bool autoReset)
         {
             Status = status;
-            if (StatusChanged != null)
+            if (StatusChanged != null) // fire up event
                 StatusChanged(this,new EventArgs());
             if (autoReset) 
                 status_reset_timer.Start();
@@ -448,9 +444,7 @@ namespace MusicLib
                     else tb.Text = TextBoxDefaultAll;  
                 }
                 else
-                {
                     tb.Text = "";
-                }
 
                 tb.SelectAll();
                 

@@ -7,7 +7,7 @@ using libdb;
 
 namespace libdb
 {
-    //dynamically generated db schema based on the attributes set on the varous classes
+    //dynamically generated db schema based on the attributes set on the varous classes i.e. Album, etc.
     //generation happens only when requested - must call IsAutoupdate() first
     //would be perfect for a preprocessor, but alas c# does not have one...
     internal static class db_structure

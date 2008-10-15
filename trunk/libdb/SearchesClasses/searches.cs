@@ -76,9 +76,9 @@ public class PieceSearch : SearchBase
             [Des("id")]                 ID        ,
             [Des("parent_piece_id")]    ParentPieceID,
             [Des("name")]               Name  ,
-            [Des("connector")] Connector,
-            [Des("composer_id")] ComposerID,
-            [Des("genre_id")] GenreID,
+            [Des("connector")]          Connector,
+            [Des("composer_id")]        ComposerID,
+            [Des("genre_id")]           GenreID,
         }
         protected override string table { get { return "tblPiece"; } }
         protected override string orderby { get { return ""; } }
