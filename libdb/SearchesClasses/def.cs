@@ -11,7 +11,6 @@ namespace libdb
     [global::System.AttributeUsage(AttributeTargets.All, Inherited = false, AllowMultiple = true)]
     sealed class DesAttribute : Attribute
     {
-        // This is a positional argument
         public DesAttribute(params string[] s)
         {
             DescriptionStrings = s;

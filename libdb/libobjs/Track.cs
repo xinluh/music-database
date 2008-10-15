@@ -81,6 +81,7 @@ namespace libdb
             }
             set
             {
+				// create new Artists objects based on the string of IDs
                 Performers = new List<Artist>(value.Length);
                 System.Array.ForEach<int>(value, (i) => Performers.Add(new Artist(i)));
             }
