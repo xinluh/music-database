@@ -98,13 +98,13 @@ namespace MusicLib
                     e.Handled = true;
                     if (clbDetail.Items.Count != 0) clbDetail.SelectedIndex = 0;
                     if (tabControl.SelectedTab == tabControl.TabPages[0] && clbDetail.Items.Count == 0)
-                        return; //too confusing to focus on the checklistbox when nothing is there
+		                tabControl.SelectedTab = tabControl.TabPages[1]; // goto text edit mode
                     tabControl.Focus();
                 }
                 else if (e.KeyData == Keys.Up || e.KeyData == Keys.Down)
                     IsScrolling = true; // don't fetch data if the user is scrolling fast
                 else if (e.KeyData == Keys.Escape)  
-                    txbComposer.Focus();
+                    txbFilter.Focus();
                 else if (e.KeyData == (Keys.Control | Keys.E))
                 {
                     //start text edit mode
