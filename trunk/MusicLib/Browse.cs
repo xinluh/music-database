@@ -71,11 +71,12 @@ namespace MusicLib
             dg.CellFormatting += (sender, e) =>
             {
                 // highlight the fact that the control is not in focus
-                e.CellStyle.SelectionBackColor = ((DataGridView)sender).Focused ? SystemColors.Highlight :
-                    SystemColors.InactiveCaption;
+                e.CellStyle.SelectionBackColor = ((DataGridView)sender).Focused ? 
+				                                 SystemColors.Highlight : SystemColors.InactiveCaption;
 
                 // highlight the pieces that are "derived" from other pieces (i.e. a transcription, etc.)
-                e.CellStyle.ForeColor = (dg[2, e.RowIndex].Value == null) ? SystemColors.ControlText : Color.Gray;
+                e.CellStyle.ForeColor = (dg[2, e.RowIndex].Value == null) ? 
+				                        SystemColors.ControlText : Color.Gray;
 
                 // highlight the cell in edit mode
                 if (dg.IsCurrentCellInEditMode && dg.CurrentCell == dg[e.ColumnIndex, e.RowIndex])
@@ -303,9 +304,11 @@ namespace MusicLib
             clbDetail.Items.Clear();
             txbEdit.Clear();
             currentPiece = null;
-            if (dg.SelectedRows.Count != 1 || dg[0, dg.SelectedRows[0].Index].Value == null) return;
+            if (dg.SelectedRows.Count != 1 || dg[0, dg.SelectedRows[0].Index].Value == null) 
+			    return;
 
-            currentPiece = new Piece(int.Parse(dg[0, dg.SelectedRows[0].Index].Value.ToString()));
+            currentPiece = 
+			    new Piece(int.Parse(dg[0, dg.SelectedRows[0].Index].Value.ToString()));
 
             if (!DetailPaneVisible) return; // no need to update UI
 
@@ -346,11 +349,13 @@ namespace MusicLib
                 SupressUpdate = true;
 
                 if (txbComposer.SelectedValue != null)
-                    pieceSearch.AddFilter(PieceSearch.Fields.ComposerID, "= " + txbComposer.SelectedValue.ToString());
+                    pieceSearch.AddFilter(PieceSearch.Fields.ComposerID, "= " 
+										  + txbComposer.SelectedValue.ToString());
                 else if (txbComposer.Text != TextBoxDefaultAll) return;
 
                 if (txbGenre.SelectedValue != null)
-                    pieceSearch.AddFilter(PieceSearch.Fields.GenreID, "= " + txbGenre.SelectedValue.ToString());
+                    pieceSearch.AddFilter(PieceSearch.Fields.GenreID, "= " 
+										  + txbGenre.SelectedValue.ToString());
                 else if (txbGenre.Text != TextBoxDefaultAll) return;
 
                 if (txbFilter.Text != TextBoxDefaultNone)
@@ -382,8 +387,8 @@ namespace MusicLib
                 now = DateTime.Now;
                 SupressUpdate = false;
                 this.Cursor = Cursors.Default;
-                change_status("Search took " + Math.Round((now - then).TotalSeconds,3) + "s for "
-                    + (dg.Rows.Count - 1) + " results");
+                change_status("Search took " + Math.Round((now - then).TotalSeconds,3) 
+							  + "s for " + (dg.Rows.Count - 1) + " results");
                 Application.DoEvents();
             }
         }
@@ -408,7 +413,8 @@ namespace MusicLib
             genreSearch.ClearFilters();
             
             if (txbComposer.SelectedValue != null)
-                genreSearch.AddFilter(GenreSearch.Fields.ComposerID, " = " + txbComposer.SelectedValue.ToString());
+                genreSearch.AddFilter(GenreSearch.Fields.ComposerID, " = " 
+									  + txbComposer.SelectedValue.ToString());
 
             txbGenre.Items.Clear();
             txbGenre.Items.AddRange(genreSearch.PerformSearchToList(),
