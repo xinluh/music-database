@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using System.Collections;
 using CustomForm;
 using libdb;
+using System.Runtime.InteropServices;
 
 namespace MusicLib
 {
@@ -48,7 +49,10 @@ namespace MusicLib
 
             txbComposer.Text = TextBoxDefaultAll;
             txbComposer.PopupWidth = -1;
-            txbComposer.UserMadeAChoice += (sender, e) => { UpdateGenreList(); UpdatePieceList(false); };
+            txbComposer.UserMadeAChoice += (sender, e) => 
+			{ UpdateGenreList(); 
+			  UpdatePieceList(false); 
+			};
             txbComposer.TextChanged += (sender, e) =>
             {
                 SupressUpdate = true;
@@ -111,6 +115,18 @@ namespace MusicLib
                     //start text edit mode
                     tabControl.SelectedTab = tabControl.TabPages[1];
                     tabControl.Focus();
+                }
+                else if (e.KeyData == (Keys.Home))
+                {
+                    dg.ClearSelection();
+                    dg.CurrentCell = dg[1, 0];
+                    dg.CurrentCell.Selected = true;
+                }
+                else if (e.KeyData == (Keys.End))
+                {
+                    dg.ClearSelection();
+                    dg.CurrentCell = dg[1, dg.RowCount - 1];
+                    dg.CurrentCell.Selected = true;
                 }
             };
             dg.KeyUp += (sender, e) =>
@@ -200,6 +216,23 @@ namespace MusicLib
             UpdateGenreList();
             UpdatePieceList(false);
         }
+
+        /// <summary>
+        /// Clear the current search and start a new one.
+        /// </summary>
+        public void StartNewSearch()
+        {
+            txbComposer.Focus();
+            txbComposer.Clear();
+        }
+        /// <summary>
+        /// Update the screen (get data again from database).
+        /// </summary>
+        public void UpdateData()
+        {
+            UpdatePieceList(true);
+        }
+
 
         private void RenamePiece(string newName)
         {
@@ -498,7 +531,103 @@ namespace MusicLib
                 tabControl.SelectedTab = tabControl.TabPages[1];
                 tabControl.Focus();
             }
-        }        
+        }
+
+        private void TrappedKeyDown(KeyEventArgs e)
+        {
+            if (e.KeyData == Keys.F6)
+                StartNewSearch();
+            else if (e.KeyData == Keys.F5)
+                UpdateData();
+            else
+                return;
+            e.Handled = true;
+            e.SuppressKeyPress = true;
+        }
+
+
+        #region Trap key events for entire user control
+
+        // http://www.codeproject.com/KB/cs/ProcessKeyPreview.aspx
+        //----------------------------------------------
+        // Define the PeekMessage API call
+        //----------------------------------------------
+
+        private struct MSG
+        {
+            public IntPtr hwnd;
+            public int message;
+            public IntPtr wParam;
+            public IntPtr lParam;
+            public int time;
+            public int pt_x;
+            public int pt_y;
+        }
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        private static extern bool PeekMessage([In, Out] ref MSG msg,
+            HandleRef hwnd, int msgMin, int msgMax, int remove);
+
+        //----------------------------------------------
+
+        /// <summary> 
+        /// Trap any keypress before child controls get hold of them
+        /// </summary>
+        /// <param name="m">Windows message</param>
+        /// <returns>True if the keypress is handled</returns>
+        protected override bool ProcessKeyPreview(ref Message m)
+        {
+            const int WM_KEYDOWN = 0x100;
+            const int WM_KEYUP = 0x101;
+            const int WM_CHAR = 0x102;
+            const int WM_SYSCHAR = 0x106;
+            const int WM_SYSKEYDOWN = 0x104;
+            const int WM_SYSKEYUP = 0x105;
+            const int WM_IME_CHAR = 0x286;
+
+            KeyEventArgs e = null;
+
+            if ((m.Msg != WM_CHAR) && (m.Msg != WM_SYSCHAR) && (m.Msg != WM_IME_CHAR))
+            {
+                e = new KeyEventArgs(((Keys)((int)((long)m.WParam))) | ModifierKeys);
+                if ((m.Msg == WM_KEYDOWN) || (m.Msg == WM_SYSKEYDOWN))
+                {
+                    TrappedKeyDown(e);
+                }
+                //else
+                //{
+                //    TrappedKeyUp(e);
+                //}
+
+                // Remove any WM_CHAR type messages if supresskeypress is true.
+                if (e.SuppressKeyPress)
+                {
+                    this.RemovePendingMessages(WM_CHAR, WM_CHAR);
+                    this.RemovePendingMessages(WM_SYSCHAR, WM_SYSCHAR);
+                    this.RemovePendingMessages(WM_IME_CHAR, WM_IME_CHAR);
+                }
+
+                if (e.Handled)
+                {
+                    return e.Handled;
+                }
+            }
+            return base.ProcessKeyPreview(ref m);
+        }
+
+        private void RemovePendingMessages(int msgMin, int msgMax)
+        {
+            if (!this.IsDisposed)
+            {
+                MSG msg = new MSG();
+                IntPtr handle = this.Handle;
+                while (PeekMessage(ref msg,
+                new HandleRef(this, handle), msgMin, msgMax, 1))
+                {
+                }
+            }
+        } 
+        #endregion
 
         
 
