@@ -22,11 +22,11 @@ namespace libdb
 
         public enum TypeCategory
         {
-            [Des("{0} = 1")]               Composers = 1,
-            [Des("{0} > 6 AND {0} != 29")] SingleArtists = 2,
-            [Des("{0} = 6")]               Conductors = 4,
-            [Des("{0} >= 3 AND {0} <= 5")] Ensembles = 8,
-            [Des("{0} = 2 OR {0} = 29")]   Other = 16,
+            [Des("{0} = 1")]               Composers = 1		,
+            [Des("{0} > 6 AND {0} != 29")] SingleArtists = 2	,
+            [Des("{0} = 6")]               Conductors = 4		,
+            [Des("{0} >= 3 AND {0} <= 5")] Ensembles = 8		,
+            [Des("{0} = 2 OR {0} = 29")]   Other = 16			,
         }
 
         protected override string table { get { return "vwArtist"; } }
@@ -38,6 +38,7 @@ namespace libdb
         }
 
         public void SetFieldToSearch(Fields[] fields) {set_field_to_search(fields.Cast<object>()); }
+
         /// <summary>
         /// Add a filter to search. Filter string can be like " = 1", then the column/field name is automatically
         /// inserted in the front; or it can also be a string.format string, like "{0} = 1 or {0} = 15", then
@@ -46,12 +47,14 @@ namespace libdb
         /// <param name="f"></param>
         /// <param name="filterstring"></param>
         public void AddFilter(Fields f, string filterstring) { add_filter(f, filterstring); }
+
         /// <summary>
         /// Search a text field for all of the words (i.e. space-separated) in the "phrases" parameter.
         /// </summary>
         /// <param name="f"></param>
         /// <param name="phrases"></param>
         public void AddWordFilter(Fields f, string phrases) { add_words_filter(f, phrases); }
+
         /// <summary>
         /// Clear all filter associated with a field/column
         /// </summary>
@@ -73,12 +76,12 @@ public class PieceSearch : SearchBase
     {
         public enum Fields
         {
-            [Des("id")]                 ID        ,
-            [Des("parent_piece_id")]    ParentPieceID,
-            [Des("name")]               Name  ,
-            [Des("connector")]          Connector,
-            [Des("composer_id")]        ComposerID,
-            [Des("genre_id")]           GenreID,
+            [Des("id")]                 ID				,
+            [Des("parent_piece_id")]    ParentPieceID	,
+            [Des("name")]               Name			,
+            [Des("connector")]          Connector		,
+            [Des("composer_id")]        ComposerID		,
+            [Des("genre_id")]           GenreID			,
         }
         protected override string table { get { return "tblPiece"; } }
         protected override string orderby { get { return ""; } }
@@ -89,6 +92,7 @@ public class PieceSearch : SearchBase
         }
 
         public void SetFieldToSearch(Fields[] fields) {set_field_to_search(fields.Cast<object>()); }
+
         /// <summary>
         /// Add a filter to search. Filter string can be like " = 1", then the column/field name is automatically
         /// inserted in the front; or it can also be a string.format string, like "{0} = 1 or {0} = 15", then
@@ -97,12 +101,14 @@ public class PieceSearch : SearchBase
         /// <param name="f"></param>
         /// <param name="filterstring"></param>
         public void AddFilter(Fields f, string filterstring) { add_filter(f, filterstring); }
+
         /// <summary>
         /// Search a text field for all of the words (i.e. space-separated) in the "phrases" parameter.
         /// </summary>
         /// <param name="f"></param>
         /// <param name="phrases"></param>
         public void AddWordFilter(Fields f, string phrases) { add_words_filter(f, phrases); }    
+
         /// <summary>
         /// Clear all filter associated with a field/column
         /// </summary>
@@ -117,9 +123,9 @@ public class GenreSearch : SearchBase
     {
         public enum Fields
         {
-                [Des("id")]                 ID        ,
-                [Des("name")]               Name  ,
-                [Des("composer_id")]        ComposerID,
+                [Des("id")]                 ID			,
+                [Des("name")]               Name		,
+                [Des("composer_id")]        ComposerID	,
 	
         }
         protected override string table { get { return "vwGenreComposer"; } }
@@ -131,6 +137,7 @@ public class GenreSearch : SearchBase
         }
 
         public void SetFieldToSearch(Fields[] fields) { set_field_to_search(fields.Cast<object>()); }
+
         /// <summary>
         /// Add a filter to search. Filter string can be like " = 1", then the column/field name is automatically
         /// inserted in the front; or it can also be a string.format string, like "{0} = 1 or {0} = 15", then
@@ -139,12 +146,14 @@ public class GenreSearch : SearchBase
         /// <param name="f"></param>
         /// <param name="filterstring"></param>
         public void AddFilter(Fields f, string filterstring) { add_filter(f, filterstring); }
+
         /// <summary>
         /// Search a text field for all of the words (i.e. space-separated) in the "phrases" parameter.
         /// </summary>
         /// <param name="f"></param>
         /// <param name="phrases"></param>
         public void AddWordFilter(Fields f, string phrases) { add_words_filter(f, phrases); }
+
         /// <summary>
         /// Clear all filter associated with a field/column
         /// </summary>

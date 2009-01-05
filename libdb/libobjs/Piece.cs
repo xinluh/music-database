@@ -117,6 +117,10 @@ namespace libdb
             return base.Insert();
         }
 
+		internal void ReadFromFile(Tag tag)
+		{
+		  // TODO
+		}
 
     }
 }

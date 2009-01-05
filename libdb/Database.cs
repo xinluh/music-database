@@ -19,7 +19,7 @@ namespace libdb
             Nothing = 0,
             IEnumerableOfList,
             DataTable,
-            DataGridView
+            DataGridView,
         }
 
         public static int Open()
@@ -45,7 +45,7 @@ namespace libdb
             return 0; //nothing to do for sqlite
         }
 
-        public static bool StatusOpen { get { return (sqlclient != null); } }
+        public static bool IsOpen { get { return (sqlclient != null); } }
 
         public static void StartTransaction()
         {
@@ -159,7 +159,7 @@ namespace libdb
 
                             if (dg == null) //make a new one!
                                 dg = new System.Windows.Forms.DataGridView();
-                            if (dg.Columns.Count == 0)
+                            if (dg.Columns.Count == 0) // add columns as necessary
                                 System.Array.ForEach(ColumnNames, (s) => { dg.Columns.Add(s, s); });
 
                             dg.Rows.Add(RowData);
@@ -175,7 +175,7 @@ namespace libdb
 
         private static void check_connection()
         {
-            if (!StatusOpen) { throw new Exception("Database not opened!"); }
+            if (!IsOpen) { throw new Exception("Database not opened!"); }
         }
     }
 }

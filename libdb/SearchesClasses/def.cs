@@ -112,6 +112,7 @@ namespace libdb
             filters.Add(value,"(" + filterstring + ")");
         }
 
+	    // filter by each word of the given string (i.e. "good day" will find result "good, sunny day" as well)
         protected void add_words_filter(Enum value, string filter)
         {
             if (string.IsNullOrEmpty(filter)) return;
@@ -120,14 +121,11 @@ namespace libdb
             string field = enum_to_des(value)[0];
             StringBuilder str = new StringBuilder();
             foreach (string s in words)
-            {
                 str.AppendFormat("({0} LIKE '%{1}%') AND ", field, s);
-            }
 
             if (str.Length > 0)
-            {
                 str.Remove(str.Length - 5, 5); //removing the ending " AND " 
-            }
+
             filters.Add(value, str.ToString());
         }
 

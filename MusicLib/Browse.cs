@@ -578,11 +578,11 @@ namespace MusicLib
         protected override bool ProcessKeyPreview(ref Message m)
         {
             const int WM_KEYDOWN = 0x100;
-            const int WM_KEYUP = 0x101;
+            //const int WM_KEYUP = 0x101;
             const int WM_CHAR = 0x102;
             const int WM_SYSCHAR = 0x106;
             const int WM_SYSKEYDOWN = 0x104;
-            const int WM_SYSKEYUP = 0x105;
+            //const int WM_SYSKEYUP = 0x105;
             const int WM_IME_CHAR = 0x286;
 
             KeyEventArgs e = null;
