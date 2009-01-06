@@ -124,7 +124,17 @@ namespace libdb
         /// <returns></returns>
         public static string Quote(string str)
         {
-            return string.Format("'{0}'", str.Replace("'", "''"));  
+            return Quote(str, true);
+        }
+
+        /// <summary>
+        /// Return string escaped ' in the string; also quoted in '' if outerQuote given true.
+        /// </summary>
+        /// <param name="str"></param>
+        /// <returns></returns>
+        public static string Quote(string str, bool outerQuote)
+        {
+            return string.Format("{0}{1}{0}", outerQuote ? "'" : "", str.Replace("'", "''"));
         }
 
         private static object _execute(string sql, OutputFormats output, object InputObject)

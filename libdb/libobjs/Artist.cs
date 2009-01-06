@@ -20,6 +20,50 @@ namespace libdb
             {
                 this.Fill(id);
             }
+            public _ArtistName(string name)
+            {
+                Fill(name);
+            }
+            
+            private void parse_name(string name)
+            {
+                if ((name.StartsWith("\"") && name.EndsWith("\"")) || // string entirely double quoted
+                    (!name.Contains(",") && !name.Trim().Contains(" "))) // name is a single word
+                {
+                    LastName = name.Trim('"');
+                    FirstName = null;
+                }
+                else if (name.Contains(",")) // probably "lastname, firstname" format 
+                {
+                    string[] s = name.Split(new char[] {','}, System.StringSplitOptions.RemoveEmptyEntries);
+                    LastName = s[0].Trim(' ','"');
+                    FirstName = s[1].Trim(' ','"');
+                }
+                else 
+                {
+                    string[] s = name.Split(new char[] {' '}, System.StringSplitOptions.RemoveEmptyEntries);
+                    LastName = s[s.Length - 1].Trim(' ','"');
+                    FirstName = string.Join(" ", s, 0, s.Length - 1);
+                }
+            }
+            
+            public void Fill(string name)
+            {
+                parse_name(name);
+                ID = GuessID();
+            }
+
+            public int GuessID()
+            {
+                string ret = (string)Database.GetScalar(string.Format(
+                    "SELECT id FROM {0} WHERE (last_name LIKE '{1}' OR alternate_last LIKE '%{1}|%') {2} LIMIT 1",
+                    "tblartistname", 
+                    Database.Quote(LastName.ToLower().Trim(),false), 
+                    string.IsNullOrEmpty(FirstName)? "": string.Format(
+                        "AND (first_name LIKE '{0}' OR alternate_first LIKE '%{0}|%')", 
+                        Database.Quote(FirstName.ToLower().Trim(),false))));
+                return string.IsNullOrEmpty(ret) ? 0 : int.Parse(ret);
+            }
 
             public override int ID { get; set; }
 
@@ -45,9 +89,30 @@ namespace libdb
             {
                 this.Fill(id);
             }
+            public _ArtistType (string name)
+	        {
+                this.Fill(name);   
+	        }
 
             [AutoUpdateProp("name", data_type.text, true)]
             public string Name { get; set; }
+
+            public void Fill(string name)
+            {
+ 	            ID = GuessID(name);
+                if (ID != 0)
+                    this.Fill(ID);
+                else
+                    this.Name = name.ToLower();
+            }
+
+            internal static int GuessID(string t)
+            {  //todo:  maybe the "name" in the sql string should be gotten directly from the AutoUpdateProp of property Name?
+                string ret = (string)Database.GetScalar(string.Format(
+                    "SELECT id FROM {0} WHERE name = {1} LIMIT 1",
+                    "tblartisttype", Database.Quote(t.ToLower().Trim())));
+                return string.IsNullOrEmpty(ret) ? 0 : int.Parse(ret);
+            }
         }
 
         _ArtistName name = new _ArtistName();
@@ -57,6 +122,32 @@ namespace libdb
         public Artist(int id)
         {
             this.Fill(id);
+        }
+
+        /// <summary>
+        /// Fill with information from database if an artist matching name and type is found (not case sensitive); otherwise 
+        /// fill the necessary fields so that the newly created object is ready for Insert() into database. Whether the artist 
+        /// given matchs a record in database can be checked by checking whether the ID is non-zero.
+        /// </summary>
+        /// <param name="name">formatted either as "firstname middlenames lastname" or "lastname, firstname middlenames"
+        /// if a string is given as double quoted, it will be treated as only lastname; i.e. "\"New York Philharmonic\"" 
+        /// will NOT be treated as a person with lastname "Philharmonic"</param>
+        /// <param name="type">i.e. composer, pianist etc.</param>
+        /// <param name="forceNewType">sets the property WillAutoInsertNewType</param>
+        public Artist(string name, string type, bool autoInsertNewType)
+        {
+            WillAutoInsertNewType = autoInsertNewType;
+            Type = type;
+            this.name.Fill(name);
+            ID = 0;
+
+            if (this.type.ID != 0 && this.name.ID != 0)
+            {
+                string ret = (string)Database.GetScalar(string.Format(
+                    "SELECT id FROM {0} WHERE name_id = {1} AND type_id = {2} LIMIT 1",
+                    "tblartist", name_id, type_id));
+                ID = string.IsNullOrEmpty(ret) ? 0 : int.Parse(ret);
+            }            
         }
 
         [AutoUpdateProp("name_id", data_type.number, false)]
@@ -95,16 +186,46 @@ namespace libdb
                 case NameFormats.Type:
                     return type.Name;
                 case NameFormats.First_Last:
-                    return ((string.IsNullOrEmpty(name.FirstName)) ? name.FirstName + " " : "") + name.LastName;
+                    return (!(string.IsNullOrEmpty(name.FirstName)) ? name.FirstName + " " : "") + name.LastName;
                 case NameFormats.Last_First:
-                    return name.LastName + ((string.IsNullOrEmpty(name.FirstName)) ? "," + name.FirstName : "");
+                    return name.LastName + ((!string.IsNullOrEmpty(name.FirstName)) ? (", " + name.FirstName) : "");
                 case NameFormats.First_Last_Type:
                     return GetName(NameFormats.First_Last) + ", " + type.Name;
                 case NameFormats.Last_First_Type:
-                    return GetName(NameFormats.Last_First) + "(" + type.Name + ")";
+                    return GetName(NameFormats.Last_First) + " (" + type.Name + ")";
                 default:
                     return "";
             }
+        }
+
+        public string Type 
+        {
+            get { return GetName(NameFormats.Type); }
+            set
+            {
+                type.Fill(value);
+                if (type.ID == 0 && WillAutoInsertNewType)
+                    type.Insert();
+            }
+        }
+
+        /// <summary>
+        /// Governs the behavior when a new artist type is set but is not found in database. 
+        /// If true, the type given is automatically inserted into database; 
+        /// if false, new type will be inserted when this artist is inserted.
+        /// </summary>
+        public bool WillAutoInsertNewType { get; set; }
+
+        public static bool TypeExists(string t)
+        {
+            return _ArtistType.GuessID(t) != 0;
+        }
+
+        public override int Insert()
+        {
+            if (name.ID == 0) name.Insert();
+            if (type.ID == 0) type.Insert();
+            return base.Insert();
         }
     }
 }

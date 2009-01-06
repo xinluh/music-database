@@ -285,13 +285,9 @@ namespace CustomForm
             {
                 AutoCompleteDataEntry entry = SelectedItem as AutoCompleteDataEntry;
                 if (entry != null)
-                {
                     return entry.ValueMember;
-                }
                 else
-                {
                     return null;
-                }
             }
         }
 
@@ -437,14 +433,6 @@ namespace CustomForm
             
         }
 
-        protected virtual void OnUserEnterNewChoice()
-        {
-            if (UserEnternewChoice != null)
-            {
-                UserEnternewChoice(this, new EventArgs());    
-            }
-        }
-
         protected virtual void OnUserMadeAChoice()
         {
             if (UserMadeAChoice != null) { UserMadeAChoice(this, new EventArgs()); }
@@ -497,7 +485,6 @@ namespace CustomForm
 
         #endregion
 
-        public event EventHandler UserEnternewChoice;
         public event EventHandler UserMadeAChoice;
 
 		public AutoCompleteTextBox()
@@ -541,12 +528,31 @@ namespace CustomForm
             UpdateList();
         }
 
+        /// <summary>
+        /// Set the text in textbox to value and try to select exactly matching autocomplete entry as well.
+        /// </summary>
+        /// <param name="value"></param>
+        public void SetTextAndSelect(string value)
+        {
+            this.TriggersEnabled = false;
+            base.Text = value;
+
+            // select the autocomplete entry as well if there is a match
+            value = value.ToUpper();
+            foreach (IAutoCompleteEntry i in items)
+            {
+                if (Array.Exists<string>(i.MatchStrings, (s) => { return s.ToUpper() == value; }))
+                    SelectedItem = i;
+            }
+
+            this.TriggersEnabled = true;
+        }
+
 		protected virtual void SelectCurrentItem()
 		{
 			if (this.list.SelectedIndex == -1)
 			{
                 SelectedItem = null;
-                OnUserEnterNewChoice();
                 return;
 			}
 
@@ -698,4 +704,5 @@ namespace CustomForm
 
         
 	}
+
 }

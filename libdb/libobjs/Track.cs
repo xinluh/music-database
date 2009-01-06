@@ -19,12 +19,16 @@ namespace libdb
         private Piece piece;
         
 
-        public Track() { }
-        public Track(int id)
+        public Track()
+        {
+            Performers = new List<Artist>();
+        }
+        public Track(int id) : this()
         {
             this.Fill(id);
+            this.album = new Album(album_id);
         }
-        public Track(int id,Album album)
+        public Track(int id,Album album) : this()
         {
             this.Fill(id);
 
@@ -68,7 +72,7 @@ namespace libdb
         private int piece_id
         {
             get { return this.piece.ID; }
-            set { piece.Fill(value); }
+            set { piece = new Piece(value); }
         }
 
         [AutoUpdateProp("performer", data_type.number_array, true)]
@@ -76,14 +80,17 @@ namespace libdb
         {
             get
             {
+                if (Performers.Count == 0) return null;
+
                 List<int> ints = new List<int>(Performers.Count);
                 Performers.ForEach((artist) => ints.Add(artist.ID));
                 return ints.ToArray();
             }
             set
             {
+                if (value == null) return;
 				// create new Artists objects based on the string of IDs
-                Performers = new List<Artist>(value.Length);
+                Performers.Clear();
                 System.Array.ForEach<int>(value, (i) => Performers.Add(new Artist(i)));
             }
         }
@@ -134,13 +141,21 @@ namespace libdb
 
 			Tag tag = new Tag(finfo.FullName);
 
-            this.Size = (int) finfo.Length;
-			this.Length = (int) System.Math.Round(tag.UltraID3.Duration.TotalSeconds, 0);
-			this.FileName = finfo.FullName;
-			this.ID = tag.TrackID ?? 0;
-			this.TrackNumber = tag.TrackNum ?? 0;
-			this.Year = tag.Year ?? 0;
-			this.DiscNumber = tag.DiscNum ??  1;
+            Size = (int) finfo.Length;
+			Length = (int) System.Math.Round(tag.UltraID3.Duration.TotalSeconds, 0);
+			FileName = finfo.FullName;
+			ID = tag.TrackID ?? 0;
+			TrackNumber = tag.TrackNum ?? 0;
+			Year = tag.Year ?? 0;
+			DiscNumber = tag.DiscNum ??  1;
+            Name = tag.Title;
+            //TODO: Performers = ???
+
+            if (Piece == null) Piece = new Piece();
+            if (Album == null) Album = new Album();
+
+            //Piece.ReadFromTag(tag);
+            //Album.ReadFromTag(tag);
         }
 
         public void WriteToFile()
@@ -159,53 +174,26 @@ namespace libdb
             Tag tag = new Tag(FileName);
             tag.Clear();
 
-            tag.Album = Album.Name;
-            tag.Title = Piece.Name;
+            tag.Year = Year; 
             tag.SetTrack(TrackNumber, Album.TotalTracks[DiscNumber - 1]);
             tag.SetDiscNum(DiscNumber, Album.TotalDisc);
+            tag.TrackID = ID;
+            tag.Title = Name;
 
-            //is not a transcription
-            if (Piece.ParentPieceID == 0 || Piece.Composer.ID == Piece.ParentPieceID) //oops TODO!
-                tag.Artist = new string[] { Piece.Composer.GetName(Artist.NameFormats.Last_First) };
-            //is a transcritption
-            else
-            {
-                //todo!
-                tag.Artist = new string[] { Piece.ComposerNameWithTranscriptor, Piece.Composer.ArtistFullName, Piece.PrimaryPiece.Composer.ArtistFullName };
-            }
+            List<string> s = new List<string>();
+            Performers.ForEach((a) => s.Add(a.GetName(Artist.NameFormats.Last_First_Type)));
+            tag.Performers = s.ToArray();
 
-            tag.Genre = Piece.Genre;
-            tag.Year = Year;
-            tag.AlbumArtist = "a"; //todo!
-            tag.Composers = Artist.GetNames(t.Performer, Artist.NameType.LastNameFirstName);
-
-            tag.ContentGroup = Piece.PieceName;
-            tag.Label = Label.GetLabelName(al.LabelID);
-            tag.UnsynchedLyric = Artist.GetName(t.Performer, Artist.NameType.FirstNameLastNameWithBriefArtistType, Constants.vbCrLf).Trim;
-            //tag.Comment = String.Join(vbCrLf, New String() {al.CDComment, t.TrackComment, Piece.ExtraInfo, Piece.Text})
-
-            tag.AlbumID = al.PrimaryKeyValue;
-            tag.TrackID = t.PrimaryKeyValue;
-            tag.AlbumType = al._AlbumType;
-            tag.IsComplete = al._Complete;
-            tag.IsInIpod = al._InIPOD;
-
-            if (IO.File.Exists(t.AssociatedAlbum.GetFilePath(Album.FilePaths.AlbumCoverPath_Auto)))
-            {
-                tag.AlbumPicture = new Bitmap(t.AssociatedAlbum.GetFilePath(Album.FilePaths.AlbumCoverPath_Auto));
-            }
+            Piece.WriteToTag(tag);
+            Album.WriteToTag(tag);
 
             tag.Write();
 
             //update the file size after adding/changing tag
-            t.FileSize = new IO.FileInfo(path).Length;
-            t.SongLength = tag.UltraID3.Duration.TotalSeconds;
-            t.Update();
-
-            this.ID = tag.TrackID ?? 0;
-            this.TrackNumber = tag.TrackNum ?? 0;
-            this.Year = tag.Year ?? 0;
-            this.DiscNumber = tag.DiscNum ?? 1;
+            FileInfo f = new FileInfo(FileName);
+            Size = (int)f.Length;
+            Length = (int)System.Math.Round(tag.UltraID3.Duration.TotalSeconds, 0);
+            Update();
         }
     }
 
