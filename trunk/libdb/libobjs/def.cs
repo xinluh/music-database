@@ -66,16 +66,15 @@ namespace libdb
         }
 
 
-        public virtual int Fill(int id)
+        public virtual void Fill(int id)
         {
-            if (!db_structure.IsAutoupdate(this)) return 0;
+            if (!db_structure.IsAutoupdate(this)) return;
         
             if (!Exists(db_structure.GetTable(this), id))
             {
-                Debug.HandleException(new Exception(string.Format(
+                throw new Exception(string.Format(
                     "id = {0} in {1} is not found; Fill() failed",
-                    id, db_structure.GetTableName(this))));
-                return 1;
+                    id, db_structure.GetTableName(this)));
             }
 
             // make sql query string...
@@ -106,9 +105,8 @@ namespace libdb
                     if (convert_from_db_datatype(ps[i].PropertyType.ToString(), values[i], out outv) != 0)
                     {
                         //conversion fails
-                        Debug.HandleException(new Exception(string.Format(
-                            "Data type conversion from {1} failed", ps[i].PropertyType.ToString())));
-                        return 1;
+                        throw new Exception(string.Format(
+                            "Data type conversion from {1} failed", ps[i].PropertyType.ToString()));
                     }
 
                     ps[i].SetValue(this, outv, null);
@@ -118,15 +116,8 @@ namespace libdb
             }
             catch (SqliteClient.SQLiteException e)
             {
-                    Debug.HandleException(e);
-                    return 1;
+                throw new Exception("Database connection returns error",e);
             }
-            catch (Exception e)
-            {
-                Debug.HandleException(e);
-                return 2;
-            }
-            return 0;
         }
         public virtual int Insert()
         {
@@ -334,6 +325,8 @@ namespace libdb
                     if (original_value is int[])
                     {
                         int[] nums = (int[])original_value;
+                        if (nums.Length == 0) return 0;
+
                         StringBuilder s = new StringBuilder();
                         for (int i = 0; i < nums.Length; i++)
                         {

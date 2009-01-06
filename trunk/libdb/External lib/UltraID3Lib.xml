@@ -86,9 +86,7 @@ UltraID3Lib
  -----------------------------------------------------------------------------
 
 </member><member name="T:HundredMilesSoftware.UltraID3Lib.ID3v22LinkedInformationFrame">
-	<summary>
- [Insert description here]
- </summary>
+	<summary></summary>
 	<remarks></remarks>
 </member><member name="M:HundredMilesSoftware.UltraID3Lib.ID3v22OriginalArtistFrame.#ctor(HundredMilesSoftware.UltraID3Lib.TextEncodingTypes)">
 	<summary>
@@ -114,9 +112,7 @@ UltraID3Lib
  -----------------------------------------------------------------------------
 
 </member><member name="T:HundredMilesSoftware.UltraID3Lib.ID3v22PopularimeterFrame">
-	<summary>
- [Insert description here]
- </summary>
+	<summary></summary>
 	<remarks></remarks>
 </member><member name="P:HundredMilesSoftware.UltraID3Lib.ID3v2OriginalFileNameFrame.OriginalFileName">
 	<summary>
@@ -179,14 +175,10 @@ UltraID3Lib
  -----------------------------------------------------------------------------
 
 </member><member name="T:HundredMilesSoftware.UltraID3Lib.ID3v2PlaylistDelayMillisecondsFormatException">
-	<summary>
- [Insert definition here]
- </summary>
+	<summary></summary>
 	<remarks></remarks>
 </member><member name="T:HundredMilesSoftware.UltraID3Lib.ID3v1TitleTooLongException">
-	<summary>
- [Insert definition here]
- </summary>
+	<summary></summary>
 	<remarks></remarks>
 </member><member name="T:HundredMilesSoftware.UltraID3Lib.ID3v2PartNumPartCountRelationException">
 	<summary>
@@ -954,9 +946,7 @@ UltraID3Lib
  -----------------------------------------------------------------------------
 
 </member><member name="T:HundredMilesSoftware.UltraID3Lib.ID3v22InvolvedPeopleListFrame">
-	<summary>
- [Insert description here]
- </summary>
+	<summary></summary>
 	<remarks></remarks>
 </member><member name="P:HundredMilesSoftware.UltraID3Lib.ID3v2DurationMillisecondsFrame.DurationMilliseconds">
 	<summary>
@@ -1015,18 +1005,14 @@ UltraID3Lib
  -----------------------------------------------------------------------------
 
 </member><member name="T:HundredMilesSoftware.UltraID3Lib.ID3v2SizeBytesFormatException">
-	<summary>
- [Insert definition here]
- </summary>
+	<summary></summary>
 	<remarks></remarks>
 </member><member name="T:HundredMilesSoftware.UltraID3Lib.ID3v1CommentsTooLong30Exception">
-	<summary>
- [Insert definition here]
- </summary>
+	<summary></summary>
 	<remarks></remarks>
 </member><member name="T:HundredMilesSoftware.UltraID3Lib.ID3v2UnsynchronizationException">
 	<summary>
- [Insert definition here]
+ The tag is unsynchronized and because UltraID3Lib can decode the frame, but not "re-unsynchronize" it, if the tag is saved, the tag will be saved synchronized.
  </summary>
 	<remarks></remarks>
 </member><member name="M:HundredMilesSoftware.UltraID3Lib.ID3v23CompactDiscIdentifierFrame.#ctor">
@@ -1057,7 +1043,7 @@ UltraID3Lib
 </member><member name="P:HundredMilesSoftware.UltraID3Lib.ID3v23CompactDiscIdentifierFrame.HeaderBytes">
  -----------------------------------------------------------------------------
  <summary>
- [Insert definition here]
+ The header byte array.
  </summary>
 	<value></value>
 	<remarks>
@@ -1067,7 +1053,7 @@ UltraID3Lib
 </member><member name="P:HundredMilesSoftware.UltraID3Lib.ID3v23CompactDiscIdentifierFrame.TrackFrameAddresses">
  -----------------------------------------------------------------------------
  <summary>
- [Insert definition here]
+ An ArrayList of the Track Frame Addresses.
  </summary>
 	<value></value>
 	<remarks>
@@ -1077,7 +1063,7 @@ UltraID3Lib
 </member><member name="P:HundredMilesSoftware.UltraID3Lib.ID3v23CompactDiscIdentifierFrame.LeadOutBytes">
  -----------------------------------------------------------------------------
  <summary>
- [Insert definition here]
+ An array of the "lead out" bytes.
  </summary>
 	<value></value>
 	<remarks>
@@ -1228,9 +1214,7 @@ UltraID3Lib
  </summary>
 	<remarks></remarks>
 </member><member name="T:HundredMilesSoftware.UltraID3Lib.ID3v2OriginalYearFormatException">
-	<summary>
- [Insert definition here]
- </summary>
+	<summary></summary>
 	<remarks></remarks>
 </member><member name="M:HundredMilesSoftware.UltraID3Lib.ID3v22PublisherWebAddressFrame.#ctor">
 	<summary>
@@ -1298,19 +1282,13 @@ UltraID3Lib
  -----------------------------------------------------------------------------
 
 </member><member name="T:HundredMilesSoftware.UltraID3Lib.ID3InvalidGenreException">
-	<summary>
- [Insert definition here]
- </summary>
+	<summary></summary>
 	<remarks></remarks>
 </member><member name="T:HundredMilesSoftware.UltraID3Lib.ID3v2InvalidLanguageCodeException">
-	<summary>
- [Insert definition here]
- </summary>
+	<summary></summary>
 	<remarks></remarks>
 </member><member name="T:HundredMilesSoftware.UltraID3Lib.ID3v2MissingPictureException">
-	<summary>
- [Insert definition here]
- </summary>
+	<summary></summary>
 	<remarks></remarks>
 </member><member name="M:HundredMilesSoftware.UltraID3Lib.ID3MetaDataException.#ctor(HundredMilesSoftware.UltraID3Lib.MetaData,System.String,HundredMilesSoftware.UltraID3Lib.ID3ExceptionLevels)">
 	<summary>
@@ -1617,126 +1595,126 @@ but other types may be used, not for these types though. This is used in a simil
 	<remarks></remarks>
 </member><member name="P:HundredMilesSoftware.UltraID3Lib.ID3v23RelativeVolumeAdjustmentFrame.RightChannelRelativeVolumeAdjustmentType">
 	<summary>
- [Insert description here]
+ Right Channel Relative Volume Adjustment Type enumeration.
  </summary>
 	<value></value>
 	<returns></returns>
 	<remarks></remarks>
 </member><member name="P:HundredMilesSoftware.UltraID3Lib.ID3v23RelativeVolumeAdjustmentFrame.RightChannelRelativeVolumeChange">
 	<summary>
- [Insert description here]
+ Right Channel Relative Volume Change value.
  </summary>
 	<value></value>
 	<returns></returns>
 	<remarks></remarks>
 </member><member name="P:HundredMilesSoftware.UltraID3Lib.ID3v23RelativeVolumeAdjustmentFrame.RightChannelPeakVolume">
 	<summary>
- [Insert description here]
+ Right Channel Peak Volume value.
  </summary>
 	<value></value>
 	<returns></returns>
 	<remarks></remarks>
 </member><member name="P:HundredMilesSoftware.UltraID3Lib.ID3v23RelativeVolumeAdjustmentFrame.LeftChannelRelativeVolumeAdjustmentType">
 	<summary>
- [Insert description here]
+ Left Channel Relative Volume Adjustment Type enumeration.
  </summary>
 	<value></value>
 	<returns></returns>
 	<remarks></remarks>
 </member><member name="P:HundredMilesSoftware.UltraID3Lib.ID3v23RelativeVolumeAdjustmentFrame.LeftChannelRelativeVolumeChange">
 	<summary>
- [Insert description here]
+ Left Channel Relative Volume Change value.
  </summary>
 	<value></value>
 	<returns></returns>
 	<remarks></remarks>
 </member><member name="P:HundredMilesSoftware.UltraID3Lib.ID3v23RelativeVolumeAdjustmentFrame.LeftChannelPeakVolume">
 	<summary>
- [Insert description here]
+ Left Channel Peak Volume value.
  </summary>
 	<value></value>
 	<returns></returns>
 	<remarks></remarks>
 </member><member name="P:HundredMilesSoftware.UltraID3Lib.ID3v23RelativeVolumeAdjustmentFrame.RightBackChannelRelativeVolumeAdjustmentType">
 	<summary>
- [Insert description here]
+ Right Back Channel Relative Volume Adjustment Type enumeration.
  </summary>
 	<value></value>
 	<returns></returns>
 	<remarks></remarks>
 </member><member name="P:HundredMilesSoftware.UltraID3Lib.ID3v23RelativeVolumeAdjustmentFrame.RightBackChannelRelativeVolumeChange">
 	<summary>
- [Insert description here]
+ Right Back Channel Relative Volume Change value.
  </summary>
 	<value></value>
 	<returns></returns>
 	<remarks></remarks>
 </member><member name="P:HundredMilesSoftware.UltraID3Lib.ID3v23RelativeVolumeAdjustmentFrame.RightBackChannelPeakVolume">
 	<summary>
- [Insert description here]
+ Right Back Channel Peak Volume value.
  </summary>
 	<value></value>
 	<returns></returns>
 	<remarks></remarks>
 </member><member name="P:HundredMilesSoftware.UltraID3Lib.ID3v23RelativeVolumeAdjustmentFrame.LeftBackChannelRelativeVolumeAdjustmentType">
 	<summary>
- [Insert description here]
+ Left Back Channel Relative Volume AdjustmentType enumeration.
  </summary>
 	<value></value>
 	<returns></returns>
 	<remarks></remarks>
 </member><member name="P:HundredMilesSoftware.UltraID3Lib.ID3v23RelativeVolumeAdjustmentFrame.LeftBackChannelRelativeVolumeChange">
 	<summary>
- [Insert description here]
+ Left Back Channel Relative Volume Change value.
  </summary>
 	<value></value>
 	<returns></returns>
 	<remarks></remarks>
 </member><member name="P:HundredMilesSoftware.UltraID3Lib.ID3v23RelativeVolumeAdjustmentFrame.LeftBackChannelPeakVolume">
 	<summary>
- [Insert description here]
+ Left Back Channel Peak Volume value.
  </summary>
 	<value></value>
 	<returns></returns>
 	<remarks></remarks>
 </member><member name="P:HundredMilesSoftware.UltraID3Lib.ID3v23RelativeVolumeAdjustmentFrame.CenterChannelRelativeVolumeAdjustmentType">
 	<summary>
- [Insert description here]
+ Center Channel Relative Volume Adjustment Type value.
  </summary>
 	<value></value>
 	<returns></returns>
 	<remarks></remarks>
 </member><member name="P:HundredMilesSoftware.UltraID3Lib.ID3v23RelativeVolumeAdjustmentFrame.CenterChannelRelativeVolumeChange">
 	<summary>
- [Insert description here]
+ Center Channel Relative Volume Change value.
  </summary>
 	<value></value>
 	<returns></returns>
 	<remarks></remarks>
 </member><member name="P:HundredMilesSoftware.UltraID3Lib.ID3v23RelativeVolumeAdjustmentFrame.CenterChannelPeakVolume">
 	<summary>
- [Insert description here]
+ Center Channel Peak Volume value.
  </summary>
 	<value></value>
 	<returns></returns>
 	<remarks></remarks>
 </member><member name="P:HundredMilesSoftware.UltraID3Lib.ID3v23RelativeVolumeAdjustmentFrame.BassChannelRelativeVolumeAdjustmentType">
 	<summary>
- [Insert description here]
+ Bass Channel Relative Volume Adjustment Type value.
  </summary>
 	<value></value>
 	<returns></returns>
 	<remarks></remarks>
 </member><member name="P:HundredMilesSoftware.UltraID3Lib.ID3v23RelativeVolumeAdjustmentFrame.BassChannelRelativeVolumeChange">
 	<summary>
- [Insert description here]
+ Bass Channel Relative Volume Change value.
  </summary>
 	<value></value>
 	<returns></returns>
 	<remarks></remarks>
 </member><member name="P:HundredMilesSoftware.UltraID3Lib.ID3v23RelativeVolumeAdjustmentFrame.BassChannelPeakVolume">
 	<summary>
- [Insert description here]
+ Bass Channel Peak Volume value.
  </summary>
 	<value></value>
 	<returns></returns>
@@ -1777,7 +1755,7 @@ but other types may be used, not for these types though. This is used in a simil
 
 </member><member name="P:HundredMilesSoftware.UltraID3Lib.ID3v2EmptyFrameDataException.FrameType">
 	<summary>
- [Insert definition here]
+ The frame type enumeration.
  </summary>
 	<value></value>
 	<returns></returns>
@@ -1833,7 +1811,7 @@ but other types may be used, not for these types though. This is used in a simil
 
 </member><member name="P:HundredMilesSoftware.UltraID3Lib.ID3v2FileTypeFrame.FileType">
 	<summary>
- [Insert definition here]
+ The name of the file type.
  </summary>
 	<value></value>
 	<returns></returns>
@@ -1860,7 +1838,7 @@ Other types may be used, not for these types though. This is used in a similar w
 
 </member><member name="P:HundredMilesSoftware.UltraID3Lib.ID3v2LanguagesFrame.Languages">
 	<summary>
- [Insert definition here]
+ A single string list of the languages.
  </summary>
 	<value></value>
 	<returns></returns>
@@ -1894,7 +1872,7 @@ Other types may be used, not for these types though. This is used in a similar w
 
 </member><member name="T:HundredMilesSoftware.UltraID3Lib.ID3v2UnsupportedRelativeVolumeAdjustmentFormatException">
 	<summary>
- [Insert definition here]
+ A Relative Volume Adjustment value was found in an invalid format.
  </summary>
 	<remarks></remarks>
 </member><member name="M:HundredMilesSoftware.UltraID3Lib.ID3v23ContentGroupDescriptionFrame.#ctor(HundredMilesSoftware.UltraID3Lib.TextEncodingTypes)">
@@ -2205,10 +2183,11 @@ Other types may be used, not for these types though. This is used in a similar w
 </member><member name="M:HundredMilesSoftware.UltraID3Lib.UltraID3.Write">
  -----------------------------------------------------------------------------
  <summary>
- Write the information currently set in the ID3v1Tag and the ID3v23Tag based on the respective WillWrite properties.
+ Write the information currently set in the ID3v1Tag and the ID3v23Tag to the file.
  </summary>
 	<remarks>
-	</remarks>
+ If there are no valid data set for the respective tag, it will be removed from the file.
+ </remarks>
  -----------------------------------------------------------------------------
 
 </member><member name="P:HundredMilesSoftware.UltraID3Lib.UltraID3.FileName">
@@ -2479,9 +2458,7 @@ Other types may be used, not for these types though. This is used in a similar w
  -----------------------------------------------------------------------------
 
 </member><member name="T:HundredMilesSoftware.UltraID3Lib.ID3v22SynchronizedLyricsFrame">
-	<summary>
- [Insert description here]
- </summary>
+	<summary></summary>
 	<remarks></remarks>
 </member><member name="P:HundredMilesSoftware.UltraID3Lib.ID3v2OriginalAlbumFrame.OriginalAlbum">
 	<summary>
@@ -2569,7 +2546,7 @@ Other types may be used, not for these types though. This is used in a similar w
 
 </member><member name="T:HundredMilesSoftware.UltraID3Lib.ID3v2FrameCompressedException">
 	<summary>
- [Insert definition here]
+ Indicates that a compressed frame cannot be decoded.
  </summary>
 	<remarks></remarks>
 </member><member name="M:HundredMilesSoftware.UltraID3Lib.GenreInfoCollection.#ctor">
@@ -2593,7 +2570,7 @@ Other types may be used, not for these types though. This is used in a similar w
 	<remarks></remarks>
 </member><member name="P:HundredMilesSoftware.UltraID3Lib.GenreInfoCollection.Item(System.Int32)">
 	<summary>
- [Insert definition here]
+ Returns the GenreInfo object as the specified index.
  </summary>
 	<param name="index"></param>
 	<value></value>
@@ -2772,9 +2749,7 @@ Other types may be used, not for these types though. This is used in a similar w
  -----------------------------------------------------------------------------
 
 </member><member name="T:HundredMilesSoftware.UltraID3Lib.ID3v22AudioEncryptionFrame">
-	<summary>
- [Insert description here]
- </summary>
+	<summary></summary>
 	<remarks></remarks>
 </member><member name="M:HundredMilesSoftware.UltraID3Lib.ID3v22BeatsPerMinuteFrame.#ctor">
  -----------------------------------------------------------------------------
@@ -3074,6 +3049,12 @@ Other types may be used, not for these types though. This is used in a similar w
  </remarks>
  -----------------------------------------------------------------------------
 
+</member><member name="M:HundredMilesSoftware.UltraID3Lib.ID3FrameCollection.SetTextEncoding(HundredMilesSoftware.UltraID3Lib.TextEncodingTypes)">
+	<summary>
+ Set the TextEncoding for all Frames which have that property to the specified value.
+ </summary>
+	<param name="textEncodingType"></param>
+	<remarks></remarks>
 </member><member name="T:HundredMilesSoftware.UltraID3Lib.ID3FrameCollection">
  -----------------------------------------------------------------------------
  <summary>
@@ -3225,9 +3206,7 @@ Other types may be used, not for these types though. This is used in a similar w
  -----------------------------------------------------------------------------
 
 </member><member name="T:HundredMilesSoftware.UltraID3Lib.ID3v22MPEGLocationLookupTableFrame">
-	<summary>
- [Insert description here]
- </summary>
+	<summary></summary>
 	<remarks></remarks>
 </member><member name="M:HundredMilesSoftware.UltraID3Lib.ID3v22OriginalFileNameFrame.#ctor">
 	<summary>
@@ -3252,9 +3231,7 @@ Other types may be used, not for these types though. This is used in a similar w
  -----------------------------------------------------------------------------
 
 </member><member name="T:HundredMilesSoftware.UltraID3Lib.ID3v22RecommendedBufferSizeFrame">
-	<summary>
- [Insert description here]
- </summary>
+	<summary></summary>
 	<remarks></remarks>
 </member><member name="M:HundredMilesSoftware.UltraID3Lib.ID3v22RecordingDayMonthFrame.#ctor">
 	<summary>
@@ -3280,13 +3257,11 @@ Other types may be used, not for these types though. This is used in a similar w
  -----------------------------------------------------------------------------
 
 </member><member name="T:HundredMilesSoftware.UltraID3Lib.ID3v22RelativeVolumeAdjustmentFrame">
-	<summary>
- [Insert description here]
- </summary>
+	<summary></summary>
 	<remarks></remarks>
 </member><member name="P:HundredMilesSoftware.UltraID3Lib.ID3v2CopyrightMessageFrame.CopyrightMessage">
 	<summary>
- [Insert definition here]
+ The text of the copyright message.
  </summary>
 	<value></value>
 	<returns></returns>
@@ -3318,22 +3293,16 @@ Other types may be used, not for these types though. This is used in a similar w
 
 </member><member name="P:HundredMilesSoftware.UltraID3Lib.ID3v2UniqueFileIDFrame.Identifier">
 	<summary>
- [Insert description here]
+ A byte identifier.
  </summary>
 	<value></value>
 	<returns></returns>
 	<remarks></remarks>
 </member><member name="P:HundredMilesSoftware.UltraID3Lib.ID3v2UniqueFileIDFrame.OwnerIdentifier">
 	<summary>
- [Insert description here]
+ The name (identifier) of the ownder of this frame.
  </summary>
 	<value></value>
-	<returns></returns>
-	<remarks></remarks>
-</member><member name="M:HundredMilesSoftware.UltraID3Lib.ID3v2UniqueFileIDFrame.GetFrameBytes">
-	<summary>
- [Insert description here]
- </summary>
 	<returns></returns>
 	<remarks></remarks>
 </member><member name="M:HundredMilesSoftware.UltraID3Lib.ID3v2UniqueFileIDFrame.ToString">
@@ -3379,7 +3348,7 @@ Other types may be used, not for these types though. This is used in a similar w
 
 </member><member name="M:HundredMilesSoftware.UltraID3Lib.GenreInfo.CompartTo(System.Object)">
 	<summary>
- [Insert definition here]
+ Compares one GenreInfo object to another.
  </summary>
 	<param name="obj"></param>
 	<returns></returns>
@@ -3546,9 +3515,7 @@ REE		Reel
  -----------------------------------------------------------------------------
 
 </member><member name="T:HundredMilesSoftware.UltraID3Lib.ID3v22EqualizationFrame">
-	<summary>
- [Insert description here]
- </summary>
+	<summary></summary>
 	<remarks></remarks>
 </member><member name="M:HundredMilesSoftware.UltraID3Lib.ID3v22ArtistFrame.#ctor(HundredMilesSoftware.UltraID3Lib.TextEncodingTypes)">
  -----------------------------------------------------------------------------
@@ -3580,9 +3547,7 @@ REE		Reel
  -----------------------------------------------------------------------------
 
 </member><member name="T:HundredMilesSoftware.UltraID3Lib.ID3v22PlayCounterFrame">
-	<summary>
- [Insert description here]
- </summary>
+	<summary></summary>
 	<remarks></remarks>
 </member><member name="M:HundredMilesSoftware.UltraID3Lib.ID3v22YearFrame.#ctor">
 	<summary>
@@ -3681,7 +3646,7 @@ REE		Reel
 	<remarks></remarks>
 </member><member name="T:HundredMilesSoftware.UltraID3Lib.ID3FieldValueFormatException">
 	<summary>
- [Insert definition here]
+ Indicates that a field of a tag was set to a value with an invalid format.
  </summary>
 	<remarks></remarks>
 </member><member name="M:HundredMilesSoftware.UltraID3Lib.ID3v23BandFrame.#ctor(HundredMilesSoftware.UltraID3Lib.TextEncodingTypes)">
@@ -3871,7 +3836,7 @@ REE		Reel
 	<remarks></remarks>
 </member><member name="P:HundredMilesSoftware.UltraID3Lib.ID3v23SynchronizedLyricsFrame.Description">
 	<summary>
- [Insert description here]
+ A description of the lyrics.
  </summary>
 	<value></value>
 	<returns></returns>
@@ -3900,14 +3865,14 @@ REE		Reel
 	<remarks></remarks>
 </member><member name="P:HundredMilesSoftware.UltraID3Lib.ID3v23SynchronizedLyricsFrame.ContentType">
 	<summary>
- [Insert description here]
+ A content type enumeration.
  </summary>
 	<value></value>
 	<returns></returns>
 	<remarks></remarks>
 </member><member name="P:HundredMilesSoftware.UltraID3Lib.ID3v23SynchronizedLyricsFrame.SynchronizedLyrics">
 	<summary>
- [Insert description here]
+ A collection of SynchronizedLyric objects.
  </summary>
 	<value></value>
 	<returns></returns>
@@ -3965,9 +3930,9 @@ REE		Reel
 	<value></value>
 	<returns></returns>
 	<remarks></remarks>
-</member><member name="M:HundredMilesSoftware.UltraID3Lib.SynchronizedLyric.CompartTo(System.Object)">
+</member><member name="M:HundredMilesSoftware.UltraID3Lib.SynchronizedLyric.CompareTo(System.Object)">
 	<summary>
- [Insert definition here]
+ Used to compare one SynchronizedLyric to another.
  </summary>
 	<param name="obj"></param>
 	<returns></returns>
@@ -6247,7 +6212,7 @@ REE		Reel
 
 </member><member name="P:HundredMilesSoftware.UltraID3Lib.ID3v2MediaTypeFrame.MediaType">
 	<summary>
- [Insert definition here]
+ The name of the media type.
  </summary>
 	<value></value>
 	<returns></returns>
@@ -6330,24 +6295,16 @@ REE		Reel
  -----------------------------------------------------------------------------
 
 </member><member name="T:HundredMilesSoftware.UltraID3Lib.ID3v2TrackNumFormatException">
-	<summary>
- [Insert definition here]
- </summary>
+	<summary></summary>
 	<remarks></remarks>
 </member><member name="T:HundredMilesSoftware.UltraID3Lib.ID3v1CommentsTooLong28Exception">
-	<summary>
- [Insert definition here]
- </summary>
+	<summary></summary>
 	<remarks></remarks>
 </member><member name="T:HundredMilesSoftware.UltraID3Lib.ID3v1TrackNumberConflictWithCommentsException">
-	<summary>
- [Insert definition here]
- </summary>
+	<summary></summary>
 	<remarks></remarks>
 </member><member name="T:HundredMilesSoftware.UltraID3Lib.ID3v2InvalidUnicodeByteOrderException">
-	<summary>
- [Insert definition here]
- </summary>
+	<summary></summary>
 	<remarks></remarks>
 </member><member name="M:HundredMilesSoftware.UltraID3Lib.ID3v23ArtistFrame.#ctor(HundredMilesSoftware.UltraID3Lib.TextEncodingTypes)">
  -----------------------------------------------------------------------------
@@ -6510,7 +6467,7 @@ Initializes a new instance of the ID3SizeBytesFrame class with a specified SizeB
 
 </member><member name="P:HundredMilesSoftware.UltraID3Lib.ID3v2TextEncodingDescFrame.Description">
 	<summary>
- [Insert definition here]
+ A description of the Text value in this frame.
  </summary>
 	<value></value>
 	<returns></returns>
@@ -6569,7 +6526,7 @@ Initializes a new instance of the ID3SizeBytesFrame class with a specified SizeB
 	<remarks></remarks>
 </member><member name="M:HundredMilesSoftware.UltraID3Lib.LanguageInfo.CompareTo(System.Object)">
 	<summary>
- [Insert definition here]
+ Used to compare one LanguageInfo to another.
  </summary>
 	<param name="obj"></param>
 	<returns></returns>
@@ -7285,9 +7242,7 @@ Initializes a new instance of the ID3SizeBytesFrame class with a specified SizeB
  -----------------------------------------------------------------------------
 
 </member><member name="T:HundredMilesSoftware.UltraID3Lib.ID3v22SynchronizedTempoCodesFrame">
-	<summary>
- [Insert description here]
- </summary>
+	<summary></summary>
 	<remarks></remarks>
 </member><member name="P:HundredMilesSoftware.UltraID3Lib.ID3v2BandFrame.Band">
  -----------------------------------------------------------------------------
@@ -7627,7 +7582,7 @@ Initializes a new instance of the ID3SizeBytesFrame class with a specified SizeB
 	<remarks></remarks>
 </member><member name="P:HundredMilesSoftware.UltraID3Lib.ID3v2UserDefinedWebAddressFrame.Description">
 	<summary>
- [Insert definition here]
+ A decription of the Web address.
  </summary>
 	<value></value>
 	<returns></returns>
@@ -7656,23 +7611,19 @@ Initializes a new instance of the ID3SizeBytesFrame class with a specified SizeB
  -----------------------------------------------------------------------------
 
 </member><member name="T:HundredMilesSoftware.UltraID3Lib.ID3v1InvalidGenreStringException">
-	<summary>
- [Insert definition here]
- </summary>
+	<summary></summary>
 	<remarks></remarks>
 </member><member name="T:HundredMilesSoftware.UltraID3Lib.ID3v2InvolvedPersonInvolvementTypeMissingException">
-	<summary>
- [Insert definition here]
- </summary>
+	<summary></summary>
 	<remarks></remarks>
 </member><member name="T:HundredMilesSoftware.UltraID3Lib.ID3v2FrameEncryptedException">
 	<summary>
- [Insert definition here]
+ Indicates that an encrypted frame cannot be deocoded.
  </summary>
 	<remarks></remarks>
 </member><member name="T:HundredMilesSoftware.UltraID3Lib.ID3v2TagException">
 	<summary>
- [Insert definition here]
+ An exception occurred at the tag level causing the entire tag to unreadable.
  </summary>
 	<remarks></remarks>
 </member><member name="M:HundredMilesSoftware.UltraID3Lib.ID3v23ConductorFrame.#ctor(HundredMilesSoftware.UltraID3Lib.TextEncodingTypes)">
@@ -7787,7 +7738,7 @@ Initializes a new instance of the ID3SizeBytesFrame class with a specified SizeB
 	<remarks></remarks>
 </member><member name="P:HundredMilesSoftware.UltraID3Lib.ID3v23TermsOfUseFrame.TermsOfUse">
 	<summary>
- [Insert definition here]
+ The text of the terms of use.
  </summary>
 	<value></value>
 	<returns></returns>
@@ -7840,14 +7791,14 @@ Initializes a new instance of the ID3SizeBytesFrame class with a specified SizeB
  </remarks>
 </member><member name="P:HundredMilesSoftware.UltraID3Lib.InvolvedPerson.Parent">
 	<summary>
- [Insert definition here]
+ The InvolvedPersonCollection to which this InvolvedPerson belongs.
  </summary>
 	<value></value>
 	<returns></returns>
 	<remarks></remarks>
 </member><member name="M:HundredMilesSoftware.UltraID3Lib.InvolvedPerson.CompareTo(System.Object)">
 	<summary>
- [Insert definition here]
+ Used to compare one InvolvedPerson class to another.
  </summary>
 	<param name="obj"></param>
 	<returns></returns>
@@ -7862,9 +7813,7 @@ Initializes a new instance of the ID3SizeBytesFrame class with a specified SizeB
  -----------------------------------------------------------------------------
 
 </member><member name="T:HundredMilesSoftware.UltraID3Lib.ID3v2InvalidImageFormatCodeException">
-	<summary>
- [Insert definition here]
- </summary>
+	<summary></summary>
 	<remarks></remarks>
 </member><member name="M:HundredMilesSoftware.UltraID3Lib.ID3v22AlbumFrame.#ctor(HundredMilesSoftware.UltraID3Lib.TextEncodingTypes)">
  -----------------------------------------------------------------------------
@@ -8188,19 +8137,13 @@ This may be a text string or a reference to the predefined media types found in 
  -----------------------------------------------------------------------------
 
 </member><member name="T:HundredMilesSoftware.UltraID3Lib.ID3v2TrackCountFormatException">
-	<summary>
- [Insert definition here]
- </summary>
+	<summary></summary>
 	<remarks></remarks>
 </member><member name="T:HundredMilesSoftware.UltraID3Lib.ID3v2UniqueFileIDTooLongException">
-	<summary>
- [Insert definition here]
- </summary>
+	<summary></summary>
 	<remarks></remarks>
 </member><member name="T:HundredMilesSoftware.UltraID3Lib.ID3v2InvolvedPersonNameMissingException">
-	<summary>
- [Insert definition here]
- </summary>
+	<summary></summary>
 	<remarks></remarks>
 </member><member name="T:HundredMilesSoftware.UltraID3Lib.ID3v2InvalidFrameHeaderException">
 	<summary>
@@ -8211,9 +8154,11 @@ This may be a text string or a reference to the predefined media types found in 
  </remarks>
 </member><member name="T:HundredMilesSoftware.UltraID3Lib.ID3v2UnableToDecodeFrameYetException">
 	<summary>
- [Insert definition here]
+ This is a valid ID3 Frame, but UltraID3Lib does not have the ability to decode it.
  </summary>
-	<remarks></remarks>
+	<remarks>
+ Most likely this is a very rarely used frame.
+ </remarks>
 </member><member name="T:HundredMilesSoftware.UltraID3Lib.UltraID3Exception">
  -----------------------------------------------------------------------------
  <summary>
@@ -8396,14 +8341,10 @@ This may be a text string or a reference to the predefined media types found in 
  -----------------------------------------------------------------------------
 
 </member><member name="T:HundredMilesSoftware.UltraID3Lib.ID3v22CompactDiscIdentifierFrame">
-	<summary>
- [Insert description here]
- </summary>
+	<summary></summary>
 	<remarks></remarks>
 </member><member name="T:HundredMilesSoftware.UltraID3Lib.ID3v22EventTimingCodesFrame">
-	<summary>
- [Insert description here]
- </summary>
+	<summary></summary>
 	<remarks></remarks>
 </member><member name="M:HundredMilesSoftware.UltraID3Lib.ID3v22CopyrightMessageFrame.#ctor(HundredMilesSoftware.UltraID3Lib.TextEncodingTypes)">
 	<summary>
@@ -8673,14 +8614,10 @@ Initializes a new instance of the ID3SizeBytesFrame class with a specified SizeB
  -----------------------------------------------------------------------------
 
 </member><member name="T:HundredMilesSoftware.UltraID3Lib.ID3v2SynchronizedLyricsTimeStampUnitException">
-	<summary>
- [Insert definition here]
- </summary>
+	<summary></summary>
 	<remarks></remarks>
 </member><member name="T:HundredMilesSoftware.UltraID3Lib.ID3v2BeatsPerMinuteFormatException">
-	<summary>
- [Insert definition here]
- </summary>
+	<summary></summary>
 	<remarks></remarks>
 </member><member name="M:HundredMilesSoftware.UltraID3Lib.ID3v2InvalidFieldDataLengthException.#ctor(HundredMilesSoftware.UltraID3Lib.ID3v23PlayCounterFrame,System.String,System.Int32,System.Int32)">
 	<summary>
@@ -8692,14 +8629,10 @@ Initializes a new instance of the ID3SizeBytesFrame class with a specified SizeB
 	<param name="standardFieldLength"></param>
 	<remarks></remarks>
 </member><member name="T:HundredMilesSoftware.UltraID3Lib.ID3v2InvalidFieldDataLengthException">
-	<summary>
- [Insert definition here]
- </summary>
+	<summary></summary>
 	<remarks></remarks>
 </member><member name="T:HundredMilesSoftware.UltraID3Lib.ID3v2UnrecognizedPictureFormatException">
-	<summary>
- [Insert definition here]
- </summary>
+	<summary></summary>
 	<remarks></remarks>
 </member><member name="F:HundredMilesSoftware.UltraID3Lib.VBRInfoFields.FrameCount">
 	<summary>
@@ -8732,7 +8665,7 @@ Initializes a new instance of the ID3SizeBytesFrame class with a specified SizeB
 	<remarks></remarks>
 </member><member name="T:HundredMilesSoftware.UltraID3Lib.VBRInfoFieldDoesNotExistException">
 	<summary>
- [Insert definition here]
+ The Variable Bit Rate field value does not exist.
  </summary>
 	<remarks></remarks>
 </member><member name="T:HundredMilesSoftware.UltraID3Lib.ID3v23EqualizationFrame">
@@ -8756,9 +8689,7 @@ Initializes a new instance of the ID3SizeBytesFrame class with a specified SizeB
  -----------------------------------------------------------------------------
 
 </member><member name="T:HundredMilesSoftware.UltraID3Lib.ID3v2SynchronizedLyricPositionFormatException">
-	<summary>
- [Insert definition here]
- </summary>
+	<summary></summary>
 	<remarks></remarks>
 </member><member name="T:HundredMilesSoftware.UltraID3Lib.InconsistantVersionException">
 	<summary>
@@ -8955,23 +8886,17 @@ Initializes a new instance of the ID3SizeBytesFrame class with a specified SizeB
 
 </member><member name="T:HundredMilesSoftware.UltraID3Lib.MPEGInvalidHeaderZeroDurationException">
 	<summary>
- [Insert definition here]
+ The MPEG head indicates that the audio portion of the file has a duration of zero.
  </summary>
 	<remarks></remarks>
 </member><member name="T:HundredMilesSoftware.UltraID3Lib.ID3YearFormatException">
-	<summary>
- [Insert definition here]
- </summary>
+	<summary></summary>
 	<remarks></remarks>
 </member><member name="T:HundredMilesSoftware.UltraID3Lib.ID3FieldValueTooLongException">
-	<summary>
- [Insert definition here]
- </summary>
+	<summary></summary>
 	<remarks></remarks>
 </member><member name="T:HundredMilesSoftware.UltraID3Lib.ID3v1ArtistTooLongException">
-	<summary>
- [Insert definition here]
- </summary>
+	<summary></summary>
 	<remarks></remarks>
 </member><member name="T:HundredMilesSoftware.UltraID3Lib.ID3v2FrameException">
 	<summary>
@@ -8981,9 +8906,11 @@ Initializes a new instance of the ID3SizeBytesFrame class with a specified SizeB
 	</remarks>
 </member><member name="T:HundredMilesSoftware.UltraID3Lib.ID3v2NonStandardFrameException">
 	<summary>
- [Insert definition here]
+ Indicates that the Frame was "non-standard" i.e. the Frame ID is not one recognized by the ID3v2 standards.
  </summary>
-	<remarks></remarks>
+	<remarks>
+ Since the format is non-standard, the data cannot be decoded and is left "as is" in binary format.
+ </remarks>
 </member><member name="T:HundredMilesSoftware.UltraID3Lib.ID3v23LinkedInformationFrame">
  -----------------------------------------------------------------------------
  <summary>
@@ -9024,9 +8951,7 @@ Initializes a new instance of the ID3SizeBytesFrame class with a specified SizeB
  If you get this, something is seriously screwed up because all of the possible enums have not been checked.
  </remarks>
 </member><member name="T:HundredMilesSoftware.UltraID3Lib.ID3v22ReverbFrame">
-	<summary>
- [Insert description here]
- </summary>
+	<summary></summary>
 	<remarks></remarks>
 </member><member name="M:HundredMilesSoftware.UltraID3Lib.ID3v22SubtitleFrame.#ctor(HundredMilesSoftware.UltraID3Lib.TextEncodingTypes)">
 	<summary>
@@ -9098,14 +9023,10 @@ Initializes a new instance of the ID3SizeBytesFrame class with a specified SizeB
  -----------------------------------------------------------------------------
 
 </member><member name="T:HundredMilesSoftware.UltraID3Lib.ID3v2FieldValueInvalidException">
-	<summary>
- [Insert definition here]
- </summary>
+	<summary></summary>
 	<remarks></remarks>
 </member><member name="T:HundredMilesSoftware.UltraID3Lib.ID3v2CreateFrameActionNotSupportedException">
-	<summary>
- [Insert definition here]
- </summary>
+	<summary></summary>
 	<remarks></remarks>
 </member><member name="M:HundredMilesSoftware.UltraID3Lib.ID3v23BeatsPerMinuteFrame.#ctor">
  -----------------------------------------------------------------------------
@@ -9326,9 +9247,7 @@ Initializes a new instance of the ID3SizeBytesFrame class with a specified SizeB
  -----------------------------------------------------------------------------
 
 </member><member name="T:HundredMilesSoftware.UltraID3Lib.ID3v2ComposerAlreadyExistsException">
-	<summary>
- [Insert definition here]
- </summary>
+	<summary></summary>
 	<remarks></remarks>
 </member><member name="M:HundredMilesSoftware.UltraID3Lib.ID3v22InitialKeyFrame.#ctor(HundredMilesSoftware.UltraID3Lib.TextEncodingTypes)">
 	<summary>
@@ -9401,7 +9320,7 @@ Initializes a new instance of the ID3SizeBytesFrame class with a specified SizeB
 
 </member><member name="P:HundredMilesSoftware.UltraID3Lib.ID3v2ContentGroupDescriptionFrame.ContentGroupDescription">
 	<summary>
- [Insert description here]
+ The text of the content group description.
  </summary>
 	<value></value>
 	<returns></returns>
@@ -9425,9 +9344,7 @@ Initializes a new instance of the ID3SizeBytesFrame class with a specified SizeB
  -----------------------------------------------------------------------------
 
 </member><member name="T:HundredMilesSoftware.UltraID3Lib.ID3v2DurationMillisecondsFormatException">
-	<summary>
- [Insert definition here]
- </summary>
+	<summary></summary>
 	<remarks></remarks>
 </member><member name="T:HundredMilesSoftware.UltraID3Lib.ID3v1AlbumTooLongException">
  -----------------------------------------------------------------------------
@@ -9440,14 +9357,10 @@ Initializes a new instance of the ID3SizeBytesFrame class with a specified SizeB
  -----------------------------------------------------------------------------
 
 </member><member name="T:HundredMilesSoftware.UltraID3Lib.ID3v2InvalidTextEncodingException">
-	<summary>
- [Insert definition here]
- </summary>
+	<summary></summary>
 	<remarks></remarks>
 </member><member name="T:HundredMilesSoftware.UltraID3Lib.ID3v2TrackNumTrackCountRelationException">
-	<summary>
- [Insert definition here]
- </summary>
+	<summary></summary>
 	<remarks></remarks>
 </member><member name="M:HundredMilesSoftware.UltraID3Lib.ID3v23PaymentWebAddressFrame.#ctor">
 	<summary>
@@ -9485,14 +9398,14 @@ Initializes a new instance of the ID3SizeBytesFrame class with a specified SizeB
 	<remarks></remarks>
 </member><member name="P:HundredMilesSoftware.UltraID3Lib.ID3v23PrivateFrame.OwnerIdentifier">
 	<summary>
- [Insert description here]
+ The name (identifier) of the owner of the private information.
  </summary>
 	<value></value>
 	<returns></returns>
 	<remarks></remarks>
 </member><member name="P:HundredMilesSoftware.UltraID3Lib.ID3v23PrivateFrame.PrivateData">
 	<summary>
- [Insert description here]
+ The actual private, binary data.
  </summary>
 	<value></value>
 	<returns></returns>
@@ -9755,24 +9668,14 @@ Reverb bounces right is the number of bounces that should be made. $FF equals an
 	</remarks>
  -----------------------------------------------------------------------------
 
-</member><member name="P:HundredMilesSoftware.UltraID3Lib.ID3v1Tag.WasFound">
+</member><member name="P:HundredMilesSoftware.UltraID3Lib.ID3v1Tag.ExistsInFile">
  -----------------------------------------------------------------------------
  <summary>
- Indicates if an ID3v1 tag was found when the Read was done
+ Indicates if the ID3v1 tag exists in the file which was read.
  </summary>
 	<value></value>
 	<remarks>
-	</remarks>
- -----------------------------------------------------------------------------
-
-</member><member name="P:HundredMilesSoftware.UltraID3Lib.ID3v1Tag.WillWrite">
- -----------------------------------------------------------------------------
- <summary>
- If set to True, the ID3v1 tag will be written to the Track when the Write method is called
- </summary>
-	<value></value>
-	<remarks>
- Initially set the the same value as WasFound after a Read.
+ This does not indicate whether there are data set for the in-memory version of the tag, but rather whether a tag existed when the last Read was performed or if a tag was created when the last Write was performed.
  </remarks>
  -----------------------------------------------------------------------------
 
@@ -9918,25 +9821,15 @@ Reverb bounces right is the number of bounces that should be made. $FF equals an
 	</remarks>
  -----------------------------------------------------------------------------
 
-</member><member name="P:HundredMilesSoftware.UltraID3Lib.ID3v2Tag.WillWrite">
+</member><member name="P:HundredMilesSoftware.UltraID3Lib.ID3v2Tag.ExistsInFile">
  -----------------------------------------------------------------------------
  <summary>
- If set to True, the ID3v2 tag will be written to the Track file when the Write method is called.
+ Indicates if the ID3v2 tag exists in the file which was read.
  </summary>
 	<value></value>
 	<remarks>
- Initially set the the same value as WasFound after a Read.
+ This does not indicate whether there are data set for the in-memory version of the tag, but rather whether a tag existed when the last Read was performed or if a tag was created when the last Write was performed.
  </remarks>
- -----------------------------------------------------------------------------
-
-</member><member name="P:HundredMilesSoftware.UltraID3Lib.ID3v2Tag.WasFound">
- -----------------------------------------------------------------------------
- <summary>
- Indicates if an ID3v23 tag was found when the Read was done
- </summary>
-	<value></value>
-	<remarks>
-	</remarks>
  -----------------------------------------------------------------------------
 
 </member><member name="P:HundredMilesSoftware.UltraID3Lib.ID3v2Tag.Frames">
@@ -10009,9 +9902,7 @@ Reverb bounces right is the number of bounces that should be made. $FF equals an
  -----------------------------------------------------------------------------
 
 </member><member name="T:HundredMilesSoftware.UltraID3Lib.ID3v1TrackNumFormatException">
-	<summary>
- [Insert definition here]
- </summary>
+	<summary></summary>
 	<remarks></remarks>
 </member><member name="M:HundredMilesSoftware.UltraID3Lib.MPEGTrackInfoException.#ctor(System.Int64,System.Int64,System.Int64,HundredMilesSoftware.UltraID3Lib.MPEGInfoException)">
 	<summary>
@@ -10057,14 +9948,10 @@ Reverb bounces right is the number of bounces that should be made. $FF equals an
  </summary>
 	<remarks></remarks>
 </member><member name="T:HundredMilesSoftware.UltraID3Lib.ID3v22EncryptedMetaFrame">
-	<summary>
- [Insert description here]
- </summary>
+	<summary></summary>
 	<remarks></remarks>
 </member><member name="T:HundredMilesSoftware.UltraID3Lib.ID3v22GeneralEncapsulatedObjectFrame">
-	<summary>
- [Insert description here]
- </summary>
+	<summary></summary>
 	<remarks></remarks>
 </member><member name="M:HundredMilesSoftware.UltraID3Lib.ID3v22OriginalYearFrame.#ctor">
 	<summary>
@@ -10089,9 +9976,7 @@ Reverb bounces right is the number of bounces that should be made. $FF equals an
  -----------------------------------------------------------------------------
 
 </member><member name="T:HundredMilesSoftware.UltraID3Lib.ID3v22UserDefinedTextFrame">
-	<summary>
- [Insert description here]
- </summary>
+	<summary></summary>
 	<remarks></remarks>
 </member><member name="P:HundredMilesSoftware.UltraID3Lib.ID3v2InterpretedByFrame.InterpretedBy">
 	<summary>
@@ -10187,18 +10072,22 @@ Reverb bounces right is the number of bounces that should be made. $FF equals an
 	<remarks></remarks>
 </member><member name="P:HundredMilesSoftware.UltraID3Lib.ID3v23PopularimeterFrame.Rating">
 	<summary>
- [Insert description here]
+ The rating.
  </summary>
 	<value></value>
 	<returns></returns>
-	<remarks></remarks>
+	<remarks>
+ Nothing or 0 to 255.
+ </remarks>
 </member><member name="P:HundredMilesSoftware.UltraID3Lib.ID3v23PopularimeterFrame.EMailAddress">
 	<summary>
- [Insert description here]
+ The e-mail address to which the rating information is associated.
  </summary>
 	<value></value>
 	<returns></returns>
-	<remarks></remarks>
+	<remarks>
+ Use your e-mail to keep your own personal Rating.
+ </remarks>
 </member><member name="M:HundredMilesSoftware.UltraID3Lib.ID3v23PopularimeterFrame.ToString">
 	<summary>
  Returns a string representation of the Frame.
@@ -10274,9 +10163,7 @@ Reverb bounces right is the number of bounces that should be made. $FF equals an
  -----------------------------------------------------------------------------
 
 </member><member name="T:HundredMilesSoftware.UltraID3Lib.ID3v2ComposerNameFormatException">
-	<summary>
- [Insert definition here]
- </summary>
+	<summary></summary>
 	<remarks></remarks>
 </member><member name="M:HundredMilesSoftware.UltraID3Lib.ID3v22BandFrame.#ctor(HundredMilesSoftware.UltraID3Lib.TextEncodingTypes)">
  -----------------------------------------------------------------------------
@@ -10428,7 +10315,7 @@ Reverb bounces right is the number of bounces that should be made. $FF equals an
 
 </member><member name="P:HundredMilesSoftware.UltraID3Lib.ID3v2InternationalStandardRecordingCodeFrame.InternationalStandardRecordingCode">
 	<summary>
- [Insert definition here]
+ The International Standard Recording Code text.
  </summary>
 	<value></value>
 	<returns></returns>
@@ -10484,9 +10371,7 @@ Reverb bounces right is the number of bounces that should be made. $FF equals an
  -----------------------------------------------------------------------------
 
 </member><member name="T:HundredMilesSoftware.UltraID3Lib.ID3v2UnsupportedUnicodeByteOrderException">
-	<summary>
- [Insert definition here]
- </summary>
+	<summary></summary>
 	<remarks></remarks>
 </member><member name="T:HundredMilesSoftware.UltraID3Lib.ID3TagException">
  -----------------------------------------------------------------------------
@@ -10499,7 +10384,7 @@ Reverb bounces right is the number of bounces that should be made. $FF equals an
 
 </member><member name="T:HundredMilesSoftware.UltraID3Lib.ID3v2VersionException">
 	<summary>
- [Insert definition here]
+ The tag cannot be read as the version is not supported by UltraID3Lib.
  </summary>
 	<remarks></remarks>
 </member><member name="M:HundredMilesSoftware.UltraID3Lib.ID3v23EncryptedCompressedFrame.ToString">
@@ -10541,7 +10426,7 @@ Reverb bounces right is the number of bounces that should be made. $FF equals an
 	<remarks></remarks>
 </member><member name="P:HundredMilesSoftware.UltraID3Lib.ID3v23PlayCounterFrame.Counter">
 	<summary>
- [Insert description here]
+ The counter field.
  </summary>
 	<value></value>
 	<returns></returns>

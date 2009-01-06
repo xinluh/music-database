@@ -26,12 +26,14 @@ namespace libdb
             }
         }
         private _Label label;
-        private Artist artist;
-
+        
         #region ctor
 
-        public Album() { }
-        public Album(int id)
+        public Album() 
+        {
+            AlbumArtist = new Artist(); 
+        }
+        public Album(int id):this()
         {
             this.Fill(id);
         }
@@ -54,7 +56,7 @@ namespace libdb
         public int TotalDisc { get; set; }
 
         [AutoUpdateProp("in_ipod", data_type.boolean, false)]
-        public bool InIpod { get; set; }
+        public bool IsInIpod { get; set; }
 
         [AutoUpdateProp("comment", data_type.text, true)]
         public string Comment { get; set; }
@@ -82,11 +84,8 @@ namespace libdb
         [AutoUpdateProp("albumartist_id", data_type.number, false)]
         private int albumartist_id
         {
-            get { return artist.ID; }
-            set
-            {
-                artist = new Artist(value);
-            }
+            get { return AlbumArtist.ID; }
+            set { AlbumArtist.Fill(value); }
         }
 
         public string Label
@@ -95,6 +94,7 @@ namespace libdb
             set { label.Name = value; }
         }
 
+        public Artist AlbumArtist { get; set; }
 
         #endregion
 
@@ -105,5 +105,27 @@ namespace libdb
 
             return base.Insert();
         }
+
+        internal void WriteToTag(Tag tag)
+        {
+            tag.Label = Label;
+            tag.Album = Name;
+            tag.AlbumArtist = AlbumArtist.GetName(Artist.NameFormats.Last_First);
+            tag.AlbumID = ID;
+            tag.AlbumType = AlbumType;
+            tag.IsComplete = IsComplete;
+            tag.IsInIpod = IsInIpod;
+
+            //if (IO.File.Exists(t.AssociatedAlbum.GetFilePath(Album.FilePaths.AlbumCoverPath_Auto)))
+            //{
+            //    tag.AlbumPicture = new Bitmap(t.AssociatedAlbum.GetFilePath(Album.FilePaths.AlbumCoverPath_Auto));
+            //}
+
+        }
+        internal static void ReadFromTag(Tag tag)
+        {
+            throw new NotImplementedException();
+        }
+
     }
 }

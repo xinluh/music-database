@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -74,7 +75,12 @@ namespace libdb
         public void Clear()
         {
             u.ID3v1Tag.Clear();
-            u.ID3v2Tag.Frames.Clear();
+            u.ID3v2Tag.Clear();
+            u.Clear();
+            u.ID3v2Tag.WillWrite = false;
+            u.ID3v1Tag.WillWrite = false;
+            u.Write(); // okay dirty fix since the lib does not seem to actually Clear() the tag.
+            u.ID3v2Tag.WillWrite = true;
         }
 
         public UltraID3 UltraID3
@@ -214,7 +220,7 @@ namespace libdb
                 }
             }
         }
-        public short? TrackNum
+        public int? TrackNum
         {
             get
             {
@@ -222,7 +228,7 @@ namespace libdb
                     ((ID3v23TrackNumFrame)u.ID3v2Tag.Frames.GetFrame(SingleInstanceID3v2FrameTypes.ID3v23TrackNum)).TrackNum : null;
             }
         }
-        public short? TotalTracks
+        public int? TotalTracks
         {
             get
             {
@@ -230,37 +236,33 @@ namespace libdb
                  ((ID3v23TrackNumFrame)u.ID3v2Tag.Frames.GetFrame(SingleInstanceID3v2FrameTypes.ID3v23TrackNum)).TrackCount : null;
             }
         }
-        public void SetTrack(short TrackNum, short TotalTrack)
+        public void SetTrack(int TrackNum, int TotalTrack)
         {
             u.ID3v2Tag.Frames.Remove(ID3v2FrameTypes.ID3v23TrackNum);
             if (TrackNum == 0 & TotalTrack == 0) return;
 
             if (TotalTrack != 0)
-            {
                 u.ID3v2Tag.Frames.Add(new ID3v23TrackNumFrame((byte)TrackNum, (byte)TotalTrack));
-            }
             else
-            {
                 u.ID3v2Tag.Frames.Add(new ID3v23TrackNumFrame((byte)TrackNum));
-            }
         }
-        public short? DiscNum
+        public int? DiscNum
         {
             get
             {
                 return u.ID3v2Tag.Frames.GetFrame(SingleInstanceID3v2FrameTypes.ID3v23PartOfSet) != null ?
-                  (short?)((ID3v23PartOfSetFrame)u.ID3v2Tag.Frames.GetFrame(SingleInstanceID3v2FrameTypes.ID3v23PartOfSet)).PartNum : null;
+                  (int?)((ID3v23PartOfSetFrame)u.ID3v2Tag.Frames.GetFrame(SingleInstanceID3v2FrameTypes.ID3v23PartOfSet)).PartNum : null;
             }
         }
-        public short? DiscCount
+        public int? DiscCount
         {
             get
             {
                 return u.ID3v2Tag.Frames.GetFrame(SingleInstanceID3v2FrameTypes.ID3v23PartOfSet) != null ?
-                   (short?)((ID3v23PartOfSetFrame)u.ID3v2Tag.Frames.GetFrame(SingleInstanceID3v2FrameTypes.ID3v23PartOfSet)).PartCount : null;
+                   (int?)((ID3v23PartOfSetFrame)u.ID3v2Tag.Frames.GetFrame(SingleInstanceID3v2FrameTypes.ID3v23PartOfSet)).PartCount : null;
             }
         }
-        public void SetDiscNum(short DiscNum, short TotalDisc)
+        public void SetDiscNum(int DiscNum, int TotalDisc)
         {
             u.ID3v2Tag.Frames.Remove(ID3v2FrameTypes.ID3v23PartOfSet);
             if (DiscNum == 0 & TotalDisc == 0) return;
@@ -274,14 +276,14 @@ namespace libdb
                 u.ID3v2Tag.Frames.Add(new ID3v23PartOfSetFrame((byte)DiscNum));
             }
         }
-        public short? Year
+        public int? Year
         {
             get { return u.ID3v2Tag.Year; }
             set
             {
                 u.ID3v2Tag.Frames.Remove(ID3v2FrameTypes.ID3v23Year);
                 if (value.HasValue && value.Value != 0)
-                    u.ID3v2Tag.Frames.Add(new ID3v23YearFrame(value.Value));
+                    u.ID3v2Tag.Frames.Add(new ID3v23YearFrame((short)value.Value));
             }
         }
         public string[] Performers
@@ -301,17 +303,20 @@ namespace libdb
                 u.ID3v2Tag.Frames.Add(c);
             }
         }
-        //public Bitmap AlbumPicture {
-        //    get {
-        //        ID3v23PictureFrame p = (ID3v23PictureFrame)u.ID3v2Tag.Frames.GetFrames(MultipleInstanceID3v2FrameTypes.Picture)(0);
-        //        return p ? p.Picture : null;
-        //    }
-        //    set {
-        //        u.ID3v2Tag.Frames.Remove(ID3v2FrameTypes.ID3v23Picture);
-        //        if (value != null) 
-        //            u.ID3v2Tag.Frames.Add(new ID3v23PictureFrame(value, PictureTypes.CoverFront, "", TextEncodingTypes.Unicode));
-        //    }
-        //}
+        public Bitmap AlbumPicture
+        {
+            get
+            {
+                ID3v23PictureFrame p = (ID3v23PictureFrame)u.ID3v2Tag.Frames.GetFrames(MultipleInstanceID3v2FrameTypes.ID3v23Picture)[0];
+                return (p != null) ? p.Picture : null;
+            }
+            set
+            {
+                u.ID3v2Tag.Frames.Remove(ID3v2FrameTypes.ID3v23Picture);
+                if (value != null)
+                    u.ID3v2Tag.Frames.Add(new ID3v23PictureFrame(value, PictureTypes.CoverFront, "", TextEncodingTypes.Unicode));
+            }
+        }
         public string UnsynchedLyric
         {
             get { return ((ID3v23UnsynchedLyricsFrame)u.ID3v2Tag.Frames.GetFrames(MultipleInstanceID3v2FrameTypes.ID3v23UnsyncedLyrics)[0]).UnsynchedLyrics; }

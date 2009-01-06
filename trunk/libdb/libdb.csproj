@@ -43,6 +43,7 @@
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -60,7 +61,6 @@
     <None Include="music.db3">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <Compile Include="IO\CodeFile1.cs" />
     <Compile Include="libobjs\Album.cs" />
     <Compile Include="libobjs\Artist.cs" />
     <Compile Include="libobjs\Attributes.cs" />

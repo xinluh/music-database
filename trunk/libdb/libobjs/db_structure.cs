@@ -132,6 +132,10 @@ namespace libdb
         {
             return get_table_info(obj).ClassAttr.AssociatedTable;
         }
+        public static Tables GetTable(string ClassTypeName)
+        {
+            return get_table_info(ClassTypeName).ClassAttr.AssociatedTable;
+        }
         public static string GetTableName(libobj obj)
         {
             return System.Enum.GetName(typeof(Tables), GetTable(obj));
@@ -165,8 +169,12 @@ namespace libdb
 
         private static table_info get_table_info(libobj obj)
         {
+            return get_table_info(obj.GetType().Name);
+        }
+        private static table_info get_table_info(string typename)
+        {
             table_info t;
-            _tables.TryGetValue(obj.GetType().Name, out t);
+            _tables.TryGetValue(typename, out t);
             return t;
         }
     }

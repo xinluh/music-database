@@ -29,7 +29,7 @@ namespace MusicLib
         bool SupressUpdate = true; // used to prevent unnecessary fetching of data
 
         public string Status { get; private set; }
-        public bool DetailPaneVisible 
+        public bool DetailPaneVisible
         {
             get { return !splitContainer1.Panel2Collapsed; }
             set { splitContainer1.Panel2Collapsed = !value; }
@@ -38,21 +38,22 @@ namespace MusicLib
         public Browse()
         {
             InitializeComponent();
-            
+
             status_reset_timer = new Timer();
             status_reset_timer.Interval = 6000; // reset status message to "Ready" after 6 sec
-            status_reset_timer.Tick += (sender, e) => 
-            { 
-                this.change_status("Ready",false); 
-                status_reset_timer.Enabled = false; 
+            status_reset_timer.Tick += (sender, e) =>
+            {
+                this.change_status("Ready", false);
+                status_reset_timer.Enabled = false;
             };
 
             txbComposer.Text = TextBoxDefaultAll;
             txbComposer.PopupWidth = -1;
-            txbComposer.UserMadeAChoice += (sender, e) => 
-			{ UpdateGenreList(); 
-			  UpdatePieceList(false); 
-			};
+            txbComposer.UserMadeAChoice += (sender, e) =>
+            {
+                UpdateGenreList();
+                UpdatePieceList(false);
+            };
             txbComposer.TextChanged += (sender, e) =>
             {
                 SupressUpdate = true;
@@ -60,36 +61,52 @@ namespace MusicLib
                 txbFilter.Text = TextBoxDefaultNone;
                 SupressUpdate = false;
             };
+            txbComposer.KeyDown += (sender, e) =>
+            {
+                if (e.KeyData == Keys.Enter)
+                    if (txbComposer.SelectedItem != null || txbComposer.Text == TextBoxDefaultAll)
+                        txbFilter.Focus();
+                    else
+                    {
+                        if (AddNewComposer(txbComposer.Text)) // add new composer and set focus to dg if add is successful
+                            dg.Focus();
+                    }
+            };
             txbComposer.LostFocus += new EventHandler(txb_LostFocus);
 
             txbGenre.Text = TextBoxDefaultAll;
             txbGenre.PopupWidth = -1;
             txbGenre.LostFocus += txb_LostFocus;
-            txbGenre.UserMadeAChoice += (sender, e) =>  UpdatePieceList(false); 
+            txbGenre.UserMadeAChoice += (sender, e) => UpdatePieceList(false);
 
             txbFilter.Text = TextBoxDefaultNone;
-            txbFilter.TextChanged += (sender, e) => UpdatePieceList(false); 
+            txbFilter.TextChanged += (sender, e) => UpdatePieceList(false);
             txbFilter.KeyDown += txb_KeyDown;
+            txbFilter.KeyDown += (sender, e) =>
+            {
+                if (e.KeyData == Keys.Down)
+                    dg.Focus();
+            };
 
             dg.Rows.Clear();
             dg.CellFormatting += (sender, e) =>
             {
                 // highlight the fact that the control is not in focus
-                e.CellStyle.SelectionBackColor = ((DataGridView)sender).Focused ? 
-				                                 SystemColors.Highlight : SystemColors.InactiveCaption;
+                e.CellStyle.SelectionBackColor = ((DataGridView)sender).Focused ?
+                                                 SystemColors.Highlight : SystemColors.InactiveCaption;
 
                 // highlight the pieces that are "derived" from other pieces (i.e. a transcription, etc.)
-                e.CellStyle.ForeColor = (dg[2, e.RowIndex].Value == null) ? 
-				                        SystemColors.ControlText : Color.Gray;
+                e.CellStyle.ForeColor = (dg[2, e.RowIndex].Value == null) ?
+                                        SystemColors.ControlText : Color.Gray;
 
                 // highlight the cell in edit mode
                 if (dg.IsCurrentCellInEditMode && dg.CurrentCell == dg[e.ColumnIndex, e.RowIndex])
                     e.CellStyle.BackColor = CellInEditColor;
             };
-            dg.SortCompare += (sender,e)=>
+            dg.SortCompare += (sender, e) =>
             {
                 // use natural sorting
-                if (dg[1, e.RowIndex1].Value == null || dg[1, e.RowIndex2].Value == null) 
+                if (dg[1, e.RowIndex1].Value == null || dg[1, e.RowIndex2].Value == null)
                     return;
                 e.SortResult = NaturalSortComparer.Default.Compare(dg[1, e.RowIndex1].Value.ToString(),
                     dg[1, e.RowIndex2].Value.ToString());
@@ -97,24 +114,28 @@ namespace MusicLib
             };
             dg.KeyDown += (sender, e) =>
             {
-                if ( (e.KeyData == Keys.Enter || e.KeyData == Keys.Tab))
+                if ((e.KeyData == Keys.Enter || e.KeyData == Keys.Tab))
                 {
                     // move to next control
                     e.Handled = true;
                     if (clbDetail.Items.Count != 0) clbDetail.SelectedIndex = 0;
                     if (tabControl.SelectedTab == tabControl.TabPages[0] && clbDetail.Items.Count == 0)
-		                tabControl.SelectedTab = tabControl.TabPages[1]; // goto text edit mode
+                        tabControl.SelectedTab = tabControl.TabPages[1]; // goto text edit mode
                     tabControl.Focus();
                 }
                 else if (e.KeyData == Keys.Up || e.KeyData == Keys.Down)
                     IsScrolling = true; // don't fetch data if the user is scrolling fast
-                else if (e.KeyData == Keys.Escape)  
+                else if (e.KeyData == Keys.Escape)
                     txbFilter.Focus();
                 else if (e.KeyData == (Keys.Control | Keys.E))
                 {
                     //start text edit mode
                     tabControl.SelectedTab = tabControl.TabPages[1];
                     tabControl.Focus();
+                }
+                else if (e.KeyData == Keys.Delete)
+                {
+                    DeletePiece();
                 }
                 else if (e.KeyData == (Keys.Home))
                 {
@@ -142,41 +163,67 @@ namespace MusicLib
                 }
             };
             dg.SelectionChanged += (sender, e) => { if (!IsScrolling) UpdateDetail(); };
-            dg.GotFocus += (sender, e) => 
-            { 
+            dg.GotFocus += (sender, e) =>
+            {
                 if (dg.SelectedRows.Count == 0) //auto select first row if nothing is already selected
-                    dg.Rows[0].Selected = true; 
+                    dg.Rows[0].Selected = true;
             };
             dg.CellEndEdit += (sender, e) =>
             {
                 dg.CurrentCell = dg[e.ColumnIndex, e.RowIndex];
-                if (dg[0,e.RowIndex].Value == null && dg.CurrentCell.Value != null) 
+                if (dg[0, e.RowIndex].Value == null && dg.CurrentCell.Value != null)
                     AddNewPiece(dg.CurrentCell.Value.ToString());
                 else if (!dg.CurrentRow.IsNewRow)
                     RenamePiece(dg.CurrentCell.Value.ToString());
             };
 
             clbDetail.KeyDown += new KeyEventHandler(clbDetail_KeyDown);
-            clbDetail.LostFocus += (sender, e) => clbDetail.ClearSelected(); 
+            clbDetail.LostFocus += (sender, e) => clbDetail.ClearSelected();
             clbDetail.SelectedIndexChanged += (sender, e) =>
             {
                 // show preview of how the formatted name is like on statusbar
                 if (!DetailPaneVisible) return; // no need to update UI
                 if (clbDetail.SelectedIndex != -1 && currentPiece != null)
                 {
-                    change_status(((currentPiece.Connector == "<--") ? 
-                        "" : currentPiece.Name + currentPiece.Connector) 
+                    change_status(((currentPiece.Connector == "<--") ?
+                        "" : currentPiece.Name + currentPiece.Connector)
                         + clbDetail.SelectedItem.ToString());
                 }
             };
 
             // don't focus on the tabs themselves
             tabControl.GotFocus += (sender, e) => this.SelectNextControl(tabControl, true, true, true, true);
-
-
-            txbEdit.KeyDown += (sender, e) => 
+            tabControl.Deselecting += (sender, e) =>
             {
-                if (e.KeyData == Keys.Escape) 
+                if (e.TabPage == tabPage2)
+                {
+                    if (string.IsNullOrEmpty(txbEdit.Text.Trim()) || ((currentPiece.Details != null &&
+                        string.Join("", currentPiece.Details) == string.Join("", txbEdit.Lines))))
+                        return;
+                    DialogResult ret = MessageBox.Show(
+                        "Your changes have not been saved; you want to save the changes?",
+                        "Confirmation", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Exclamation);
+                    switch (ret)
+                    {
+                        case DialogResult.Cancel:
+                            e.Cancel = true;
+                            txbEdit.Focus();
+                            break;
+                        case DialogResult.No:
+                            UpdateDetail();
+                            break;
+                        case DialogResult.Yes:
+                            ChangeDetail(txbEdit.Lines);
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            };
+
+            txbEdit.KeyDown += (sender, e) =>
+            {
+                if (e.KeyData == Keys.Escape)
                     tabControl.SelectTab(0);
                 if (e.KeyData == (Keys.Control | Keys.Enter)) // submit changes and leave edit mode
                 {
@@ -186,7 +233,18 @@ namespace MusicLib
                 if (e.KeyData == (Keys.Shift | Keys.Enter))
                     ChangeDetail(txbEdit.Lines); // submit changes but not leaving edit mode
             };
-            txbEdit.PreviewKeyDown += (sender,e) =>
+            //txbEdit.LostFocus += (sender, e) =>
+            //{
+            //    if (txbEdit.Text.Trim() == "" || currentPiece.Details == txbEdit.Lines) return;
+            //    change_status("aa");
+            //    //if (MessageBox.Show("Your changes have not been saved; are you sure you want to leave and discard the changes?",
+            //    //    "Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) == DialogResult.No)
+            //    //    txbEdit.Focus();
+            //    //else
+            //    //    txbEdit.Lines = currentPiece.Details;
+            //};
+
+            txbEdit.PreviewKeyDown += (sender, e) =>
             {
                 if (e.KeyData == (Keys.Shift | Keys.Enter) || e.KeyData == (Keys.Control | Keys.Enter))
                     e.IsInputKey = false; //shift+enter and ctrl+enter is used for special purposes, not input...
@@ -194,13 +252,14 @@ namespace MusicLib
             //txbEdit.GotFocus += (sender,e) => txbEdit.Lines = currentPiece.Details;
         }
 
+
         /// <summary>
         /// Must call before using; handles important procedures such as connecting to DB.
         /// </summary>
         public void Initialize()
         {
             Database.Open();
-            
+
             artistSearch = new ArtistSearch(ArtistSearch.Fields.ID, ArtistSearch.Fields.FullName);
             artistSearch.AddTypeToSearch(ArtistSearch.TypeCategory.Composers);
 
@@ -236,12 +295,12 @@ namespace MusicLib
 
         private void RenamePiece(string newName)
         {
-            if (currentPiece == null) return ;
+            if (currentPiece == null) return;
             if (SupressUpdate) return;
 
             if (newName == "")
             {   // ask for a new name
-                Dialogs.Inputbox input = new MusicLib.Dialogs.Inputbox("Enter a new name for the piece",
+                Dialogs.Inputbox input = new Dialogs.Inputbox("Enter a new name for the piece",
                     currentPiece.Name, false);
 
                 if (input.ShowDialog() == DialogResult.OK) newName = input.InputText;
@@ -274,12 +333,51 @@ namespace MusicLib
 
         private void ChangeDetail(string[] lines)
         {
-            if (currentPiece == null || currentPiece.Details == lines) return;
+            if (string.IsNullOrEmpty(txbEdit.Text.Trim()) || ((currentPiece.Details != null &&
+                        string.Join("", currentPiece.Details) == string.Join("", lines))))
+                return;
 
             currentPiece.Details = lines;
             currentPiece.Update();
             UpdateDetail();
             change_status("Details update successful");
+        }
+
+        private bool AddNewComposer(string name)
+        {
+            try
+            {
+                SupressUpdate = true;
+                if (name == "")
+                {   // ask for a new name
+                    Dialogs.Inputbox input = new Dialogs.Inputbox("Enter a new name for the new composer",
+                        currentPiece.Name, false);
+
+                    if (input.ShowDialog() == DialogResult.OK) name = input.InputText;
+                    else return false;
+                }
+                else if (MessageBox.Show("Do you want to add composer " + txbComposer.Text + " to the database?",
+                    "Confirmation", MessageBoxButtons.YesNo) != DialogResult.Yes)
+                    return false;
+
+                Artist c = new Artist(txbComposer.Text, "composer", false);
+                if (c.ID != 0)
+                    MessageBox.Show("The new composer you entered exists in the database as "
+                    + c.GetName(Artist.NameFormats.Last_First_Type) + ".\n It is therefore not added to database");
+                else
+                    c.Insert();
+
+                SupressUpdate = false;
+                UpdateArtistList();
+                txbComposer.SetTextAndSelect(c.GetName(Artist.NameFormats.Last_First));
+                change_status("Composer " + c.GetName(Artist.NameFormats.First_Last) + " has been added to database.",false);
+                return true;
+            }
+            finally
+            {
+                SupressUpdate = false;
+            }
+
         }
 
         private void AddNewPiece(string name)
@@ -330,18 +428,47 @@ namespace MusicLib
             }
         }
 
+        private void DeletePiece()
+        {
+            if (currentPiece == null) return;
+            if (SupressUpdate) return;
+
+            try
+            {
+                SupressUpdate = true;
+
+                // ask for confirmation
+                if (MessageBox.Show("Are you sure to delete the selected piece(s)?\nThis is not reversible!",
+                    "Delete Piece", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) != DialogResult.Yes)
+                    return;
+
+                currentPiece.Delete();
+                dg.ClearSelection();
+                dg.CurrentCell = dg[1, (dg.CurrentCell.RowIndex == dg.Rows.Count) ?
+                                        dg.CurrentCell.RowIndex - 1 : dg.CurrentCell.RowIndex + 1];
+                dg.CurrentCell.Selected = true;
+
+                SupressUpdate = false;
+                UpdatePieceList(true);
+            }
+            finally
+            {
+                SupressUpdate = false;
+            }
+        }
+
         private void UpdateDetail()
         {
             if (SupressUpdate) return;
-            
+
             clbDetail.Items.Clear();
             txbEdit.Clear();
             currentPiece = null;
-            if (dg.SelectedRows.Count != 1 || dg[0, dg.SelectedRows[0].Index].Value == null) 
-			    return;
+            if (dg.SelectedRows.Count != 1 || dg[0, dg.SelectedRows[0].Index].Value == null)
+                return;
 
-            currentPiece = 
-			    new Piece(int.Parse(dg[0, dg.SelectedRows[0].Index].Value.ToString()));
+            currentPiece =
+                new Piece(int.Parse(dg[0, dg.SelectedRows[0].Index].Value.ToString()));
 
             if (!DetailPaneVisible) return; // no need to update UI
 
@@ -352,7 +479,7 @@ namespace MusicLib
                 //check all
                 for (int i = 0; i < clbDetail.Items.Count; i++)
                     clbDetail.SetItemChecked(i, true);
-                
+
                 clbDetail.ClearSelected();
                 txbEdit.Lines = currentPiece.Details;
             }
@@ -382,13 +509,13 @@ namespace MusicLib
                 SupressUpdate = true;
 
                 if (txbComposer.SelectedValue != null)
-                    pieceSearch.AddFilter(PieceSearch.Fields.ComposerID, "= " 
-										  + txbComposer.SelectedValue.ToString());
+                    pieceSearch.AddFilter(PieceSearch.Fields.ComposerID, "= "
+                                          + txbComposer.SelectedValue.ToString());
                 else if (txbComposer.Text != TextBoxDefaultAll) return;
 
                 if (txbGenre.SelectedValue != null)
-                    pieceSearch.AddFilter(PieceSearch.Fields.GenreID, "= " 
-										  + txbGenre.SelectedValue.ToString());
+                    pieceSearch.AddFilter(PieceSearch.Fields.GenreID, "= "
+                                          + txbGenre.SelectedValue.ToString());
                 else if (txbGenre.Text != TextBoxDefaultAll) return;
 
                 if (txbFilter.Text != TextBoxDefaultNone)
@@ -420,8 +547,8 @@ namespace MusicLib
                 now = DateTime.Now;
                 SupressUpdate = false;
                 this.Cursor = Cursors.Default;
-                change_status("Search took " + Math.Round((now - then).TotalSeconds,3) 
-							  + "s for " + (dg.Rows.Count - 1) + " results");
+                change_status("Search took " + Math.Round((now - then).TotalSeconds, 3)
+                              + "s for " + (dg.Rows.Count - 1) + " results");
                 Application.DoEvents();
             }
         }
@@ -429,7 +556,7 @@ namespace MusicLib
         private void UpdateArtistList()
         {
             if (SupressUpdate) return;
-            
+
             txbComposer.Items.Clear();
             txbComposer.Items.AddRange(artistSearch.PerformSearchToList(),
                                        1,  //match FullName
@@ -444,10 +571,10 @@ namespace MusicLib
             if (SupressUpdate) return;
 
             genreSearch.ClearFilters();
-            
+
             if (txbComposer.SelectedValue != null)
-                genreSearch.AddFilter(GenreSearch.Fields.ComposerID, " = " 
-									  + txbComposer.SelectedValue.ToString());
+                genreSearch.AddFilter(GenreSearch.Fields.ComposerID, " = "
+                                      + txbComposer.SelectedValue.ToString());
 
             txbGenre.Items.Clear();
             txbGenre.Items.AddRange(genreSearch.PerformSearchToList(),
@@ -458,12 +585,13 @@ namespace MusicLib
             txbGenre.ForceUpdateList();
         }
 
-        private void change_status(string status,bool autoReset)
+        private void change_status(string status, bool autoReset)
         {
+            status_reset_timer.Stop();
             Status = status;
             if (StatusChanged != null) // fire up event
-                StatusChanged(this,new EventArgs());
-            if (autoReset) 
+                StatusChanged(this, new EventArgs());
+            if (autoReset)
                 status_reset_timer.Start();
         }
 
@@ -472,6 +600,7 @@ namespace MusicLib
             change_status(status, true);
         }
 
+        // a few common keyboard shortcuts for textboxes
         private void txb_KeyDown(object sender, KeyEventArgs e)
         {
             TextBox tb = (TextBox)sender;
@@ -480,16 +609,16 @@ namespace MusicLib
                 if (tb.Text == "")
                 {
                     if (sender == txbFilter) tb.Text = TextBoxDefaultNone;
-                    else tb.Text = TextBoxDefaultAll;  
+                    else tb.Text = TextBoxDefaultAll;
                 }
                 else
                     tb.Text = "";
 
                 tb.SelectAll();
-                
+
                 UpdatePieceList(false);
             }
-            else if (e.KeyData == Keys.Enter)
+            else if (e.KeyData == Keys.Enter && tb != txbComposer)
             {
                 this.SelectNextControl((Control)sender, true, true, true, true);
             }
@@ -626,10 +755,10 @@ namespace MusicLib
                 {
                 }
             }
-        } 
+        }
         #endregion
 
-        
+
 
     }
 }
