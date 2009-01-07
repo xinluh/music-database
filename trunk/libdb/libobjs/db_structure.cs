@@ -147,7 +147,7 @@ namespace libdb
         public static string[] GetFieldNames(libobj obj) { return get_table_info(obj).FieldNames; }
         public static data_type[] GetDataTypes(libobj obj) { return get_table_info(obj).DataTypes; }
         public static bool[] GetIsNullable(libobj obj) { return get_table_info(obj).IsNullable; }
-        public static bool[] GetWritable(libobj obj) { return get_table_info(obj).Writable; }
+        public static bool[] GetIsWritable(libobj obj) { return get_table_info(obj).Writable; }
         public static ConversionHandler[] GetConversionHandlers(libobj obj)
         { return get_table_info(obj).ConversioHandlers; }
         
@@ -162,7 +162,7 @@ namespace libdb
             List<string> newlist = new List<string>(list.Length);
             
             for (int i = 0; i < list.Length; i++)
-                if (GetWritable(obj)[i]) { newlist.Add(list[i]); }
+                if (GetIsWritable(obj)[i]) { newlist.Add(list[i]); }
             
             return newlist.ToArray();
         }

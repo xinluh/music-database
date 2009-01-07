@@ -65,8 +65,13 @@ namespace libdb
             ID = 0; 
         }
 
-
         public virtual void Fill(int id)
+        {
+            Fill(id, true);
+        }
+
+        // the "createClone" param is to avoid infinite loop...
+        internal virtual void Fill(int id, bool createClone)
         {
             if (!db_structure.IsAutoupdate(this)) return;
         
@@ -114,7 +119,7 @@ namespace libdb
                     ps[i].SetValue(this, outv, null);
                   }
                 this.ID = id;
-                this.old_values = Clone();
+                if (createClone) this.old_values = Clone();
             }
             catch (SqliteClient.SQLiteException e)
             {
@@ -140,8 +145,7 @@ namespace libdb
             string str = String.Format("INSERT INTO {0} ({1}) VALUES ({2})",
                 db_structure.GetTableName(this),
                 string.Join(",", db_structure.CleanUpForWrite(this, db_structure.GetFieldNames(this))),
-                string.Join(",", db_structure.CleanUpForWrite(
-                this, (string[])values.ToArray(typeof(string)))));
+                string.Join(",", (string[])values.ToArray(typeof(string))));
 
             Database.ExecuteNonQuery(str);
             this.ID = Database.LastInsertRowID();
@@ -154,7 +158,7 @@ namespace libdb
                 return;
             if (this.ID == 0)
                 throw new Exception("The record does not exist in database; try Insert() instead of Update()");
-            if (this.IsEquivalent(old_values)) //nothing changed; no update
+            if (this.IsEquivalent(old_values)) //nothing changed; no update needed
                 return;
 
             ArrayList values = get_values_for_db();
@@ -164,7 +168,7 @@ namespace libdb
 
             // get the right format for update...
             string[] _columns = db_structure.CleanUpForWrite(this, db_structure.GetFieldNames(this));
-            string[] _values = db_structure.CleanUpForWrite(this, (string[])values.ToArray(typeof(string)));
+            string[] _values = (string[])values.ToArray(typeof(string));
             StringBuilder sb = new StringBuilder();
 
             for (int i = 0; i < _columns.Length; i++)
@@ -213,12 +217,29 @@ namespace libdb
             //    //TODO
             //    return copy;
             //}
-            return this;
+            // todo: actually make a copy (including changes since retrieved from db)!
+            libobj o = (libobj)System.Activator.CreateInstance(this.GetType());
+            o.Fill(this.ID, false);
+            return o;
         }
         
         public virtual bool IsEquivalent(libobj obj)
         {
-            return false;
+            PropertyInfo[] ps = db_structure.PropertiesToBeUpdated(this);
+            data_type[] datatypes = db_structure.GetDataTypes(this);
+            bool[] writable = db_structure.GetIsWritable(this);
+
+            for (int i = 0; i < ps.Length; i++)
+            {
+                if (!writable[i]) continue; //Readonly field should not be changed
+
+                if (is_same(datatypes[i], ps[i].GetValue(this, null), ps[i].GetValue(this.old_values, null)))
+                    continue;
+                else
+                    return false;
+            }
+
+            return true;
         }
 
         private ArrayList get_values_for_db()
@@ -230,17 +251,20 @@ namespace libdb
                 ArrayList values = new ArrayList();
                 data_type[] datatypes = db_structure.GetDataTypes(this);
                 bool[] nullable = db_structure.GetIsNullable(this);
+                bool[] writable = db_structure.GetIsWritable(this);
                 object outv, v;
 
                 // try type casting the properties
                 for (int i = 0; i < ps.Length; i++)
                 {
+                    if (!writable[i]) continue; //ignore readonly fields
+
                     v = ps[i].GetValue(this, null);
                     if (v == null && !nullable[i])
                     {
-                        Debug.HandleException(new Exception(
-                            "tried to insert null value in non-nullable field; insert fails"));
-                        return null;
+                        throw new Exception(
+                            "tried to insert null value in non-nullable field; insert/update fails");
+                        //return null;
                     }
 
                     //try the specific handler first
@@ -270,6 +294,51 @@ namespace libdb
                 return null;
             }
 
+        }
+
+
+        internal static bool is_same(data_type target_type, object v1, object v2)
+        {
+            if (v1 == null && v2 == null) return true;
+            else if (v1 == null || v2 == null) return false;
+
+            switch (target_type)
+            {
+                default:
+                case data_type.text:
+                    return v1.ToString() == v2.ToString();
+                case data_type.number:
+                    try
+                    {
+                        int i1 = Convert.ToInt32(v1.GetType().IsSubclassOf(typeof(System.Enum)) ? v1 : v1.ToString());
+                        int i2 = Convert.ToInt32(v2.GetType().IsSubclassOf(typeof(System.Enum)) ? v2 : v2.ToString());
+                        return i1 == i2;
+                    }
+                    catch (Exception e)
+                    {
+                        throw new Exception(string.Format("Cannot compare {0} and {1} as number",
+                            v1.ToString(),v2.ToString()), e);
+                    }
+                case data_type.boolean:
+                    if (v1 is bool && v2 is bool)
+                        return (bool)v1 == (bool)v2;
+                    else
+                        return is_same(data_type.number, v1, v2);
+                case data_type.number_array:
+                    if (v1 is int[] && v2 is int[])
+                    {
+                        if (((int[])v1).Length != ((int[])v2).Length)
+                            return false;
+
+                        for (int i = 0; i < ((int[])v1).Length; i++)
+                            if (((int[])v1) [i] != ((int[])v2)[i]) return false;
+
+                        return true;
+                    }
+                    else
+                        throw new Exception(string.Format("Cannot compare {0} and {1} as number array!",
+                            v1.ToString(),v2.ToString()));
+            }
         }
 
         internal static int convert_to_db_datatype(
