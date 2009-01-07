@@ -25,7 +25,7 @@ namespace libdb
                 Fill(name);
             }
             
-            private void parse_name(string name)
+            internal void parse_name(string name)
             {
                 if ((name.StartsWith("\"") && name.EndsWith("\"")) || // string entirely double quoted
                     (!name.Contains(",") && !name.Trim().Contains(" "))) // name is a single word
@@ -129,11 +129,9 @@ namespace libdb
         /// fill the necessary fields so that the newly created object is ready for Insert() into database. Whether the artist 
         /// given matchs a record in database can be checked by checking whether the ID is non-zero.
         /// </summary>
-        /// <param name="name">formatted either as "firstname middlenames lastname" or "lastname, firstname middlenames"
-        /// if a string is given as double quoted, it will be treated as only lastname; i.e. "\"New York Philharmonic\"" 
-        /// will NOT be treated as a person with lastname "Philharmonic"</param>
+        /// <param name="name">See specification of property name for the valid formatting accepted</param>
         /// <param name="type">i.e. composer, pianist etc.</param>
-        /// <param name="forceNewType">sets the property WillAutoInsertNewType</param>
+        /// <param param name="autoInsertNewType">sets the property WillAutoInsertNewType</param>
         public Artist(string name, string type, bool autoInsertNewType)
         {
             WillAutoInsertNewType = autoInsertNewType;
@@ -173,6 +171,20 @@ namespace libdb
             Last_First,
             First_Last_Type,
             Last_First_Type,
+        }
+
+        /// <summary>
+        /// This is a write-only property; use GetName() to get the value.
+        /// Accept string formatted either as "firstname middlenames lastname" or "lastname, firstname middlenames"
+        /// if a string is given as double quoted, it will be treated as only lastname; i.e. "\"New York Philharmonic\"" 
+        /// will NOT be treated as a person with lastname "Philharmonic"
+        /// </summary>
+        public string Name
+        {
+            set
+            {
+                name.parse_name(value);
+            }
         }
 
         public string GetName(NameFormats format)
@@ -226,6 +238,13 @@ namespace libdb
             if (name.ID == 0) name.Insert();
             if (type.ID == 0) type.Insert();
             return base.Insert();
+        }
+
+        public override void Update()
+        {
+            name.Update();
+            type.Update();
+            base.Update();
         }
     }
 }

@@ -116,13 +116,11 @@ namespace libdb
         public Artist Composer { get; set; }
         public List<Piece> ParentPieces { get; private set; }
 
-        public override int Update()
+        public override void Update()
         {
-            // urgent TODO: don't update the unnecessary!
             Composer.Update();
             genre.Update();
-
-            return base.Update();
+            base.Update();
         }
 
         public override int Insert()

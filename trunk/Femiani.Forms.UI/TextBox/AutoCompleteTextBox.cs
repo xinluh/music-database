@@ -278,8 +278,43 @@ namespace CustomForm
         /// </summary>
         public bool MatchDisplayString { get; set; }
 
-        public object SelectedItem { get; private set; }
+        /// <summary>
+        /// The IAutoCompleteEntry selected by user
+        /// </summary>
+        public IAutoCompleteEntry SelectedItem { get; private set; }
 
+        /// <summary>
+        /// The highlighted item in the drop-down list; if list not visible, null is returned.
+        /// </summary>
+        public IAutoCompleteEntry HighlightedItem
+        {
+            get
+            {
+                if (this.popup.Visible)
+                    return (IAutoCompleteEntry) this.list.SelectedItem;
+                else
+                    return null;
+            }
+        }
+
+        /// <summary>
+        /// The ValueMember of the currently highlighted AutoCompleteDataEntry, if such is selected.
+        /// </summary>
+        public object HighlightedValue
+        {
+            get
+            {
+                AutoCompleteDataEntry entry = HighlightedItem as AutoCompleteDataEntry;
+                if (entry != null)
+                    return entry.ValueMember;
+                else
+                    return null;
+            }
+        }
+
+        /// <summary>
+        /// The ValueMember of the currently selected AutoCompleteDataEntry, if such is selected.
+        /// </summary>
         public object SelectedValue {
             get
             {
@@ -433,9 +468,9 @@ namespace CustomForm
             
         }
 
-        protected virtual void OnUserMadeAChoice()
+        protected virtual void OnItemSelected()
         {
-            if (UserMadeAChoice != null) { UserMadeAChoice(this, new EventArgs()); }
+            if (ItemSelected != null) { ItemSelected(this, new EventArgs()); }
         }
 
         private void List_SelectedIndexChanged(object sender, EventArgs e)
@@ -485,7 +520,10 @@ namespace CustomForm
 
         #endregion
 
-        public event EventHandler UserMadeAChoice;
+        /// <summary>
+        /// Fires when user selected an item from autocomplete entry list
+        /// </summary>
+        public event EventHandler ItemSelected;
 
 		public AutoCompleteTextBox()
 		{
@@ -528,8 +566,14 @@ namespace CustomForm
             UpdateList();
         }
 
+        public void HideAutoCompleteList()
+        {
+            HideList();
+        }
+
         /// <summary>
-        /// Set the text in textbox to value and try to select exactly matching autocomplete entry as well.
+        /// Set the text in textbox to value and try to select exactly matching autocomplete entry as well 
+        /// if a match exists.
         /// </summary>
         /// <param name="value"></param>
         public void SetTextAndSelect(string value)
@@ -558,7 +602,7 @@ namespace CustomForm
 
 			this.Focus();
 			this.Text = this.list.SelectedItem.ToString();
-            this.SelectedItem = this.list.SelectedItem;
+            this.SelectedItem = (IAutoCompleteEntry) this.list.SelectedItem;
 			if (this.Text.Length > 0)
 			{
 				this.SelectionStart = this.Text.Length;
@@ -606,7 +650,7 @@ namespace CustomForm
 			this.hook = null;
 
             // only raise event when the popup is still visible; to avoid duplicate events
-            if (this.popup.Visible)  OnUserMadeAChoice(); 
+            if (this.popup.Visible)  OnItemSelected(); 
 
             this.popup.Hide();
             
