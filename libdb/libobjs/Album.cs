@@ -100,8 +100,7 @@ namespace libdb
 
         public override int Insert()
         {
-            int retval;
-            retval = this.label.Update();
+            this.label.Update();
 
             return base.Insert();
         }

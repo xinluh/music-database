@@ -49,7 +49,7 @@ namespace MusicLib
 
             txbComposer.Text = TextBoxDefaultAll;
             txbComposer.PopupWidth = -1;
-            txbComposer.UserMadeAChoice += (sender, e) =>
+            txbComposer.ItemSelected += (sender, e) =>
             {
                 UpdateGenreList();
                 UpdatePieceList(false);
@@ -64,6 +64,7 @@ namespace MusicLib
             txbComposer.KeyDown += (sender, e) =>
             {
                 if (e.KeyData == Keys.Enter)
+                {
                     if (txbComposer.SelectedItem != null || txbComposer.Text == TextBoxDefaultAll)
                         txbFilter.Focus();
                     else
@@ -71,13 +72,21 @@ namespace MusicLib
                         if (AddNewComposer(txbComposer.Text)) // add new composer and set focus to dg if add is successful
                             dg.Focus();
                     }
+                }
+                else if (e.KeyData == Keys.F2 && txbComposer.HighlightedItem != null)
+                {
+                    //change_status(txbComposer.HighlightedValue.ToString() + txbComposer.HighlightedItem.ToString());
+                    int id = int.Parse(txbComposer.HighlightedValue.ToString());
+                    txbComposer.HideAutoCompleteList();
+                    RenameComposer(id, "");
+                }
             };
             txbComposer.LostFocus += new EventHandler(txb_LostFocus);
 
             txbGenre.Text = TextBoxDefaultAll;
             txbGenre.PopupWidth = -1;
             txbGenre.LostFocus += txb_LostFocus;
-            txbGenre.UserMadeAChoice += (sender, e) => UpdatePieceList(false);
+            txbGenre.ItemSelected += (sender, e) => UpdatePieceList(false);
 
             txbFilter.Text = TextBoxDefaultNone;
             txbFilter.TextChanged += (sender, e) => UpdatePieceList(false);
@@ -252,7 +261,7 @@ namespace MusicLib
             //txbEdit.GotFocus += (sender,e) => txbEdit.Lines = currentPiece.Details;
         }
 
-
+        
         /// <summary>
         /// Must call before using; handles important procedures such as connecting to DB.
         /// </summary>
@@ -290,6 +299,44 @@ namespace MusicLib
         public void UpdateData()
         {
             UpdatePieceList(true);
+        }
+
+        private void RenameComposer(int id, string newName)
+        {
+            Artist a;
+            if (!(id > 0 && (a = new Artist(id)).ID > 0)) return;
+
+            if (newName == "")
+            {   // ask for a new name
+                Dialogs.Inputbox input = new Dialogs.Inputbox("Enter a new name for composer " 
+                    + a.GetName(Artist.NameFormats.First_Last),
+                    a.GetName(Artist.NameFormats.First_Last), false);
+
+                if (input.ShowDialog() == DialogResult.OK) newName = input.InputText;
+                else return;
+            }
+
+            try
+            {
+                change_status("Renaming composer...");
+                this.Cursor = Cursors.WaitCursor;
+                Application.DoEvents();
+
+                a.Name = newName;
+                a.Update();
+
+                UpdateArtistList();
+                txbComposer.SetTextAndSelect(a.GetName(Artist.NameFormats.Last_First));
+                txbComposer.SelectAll();
+                UpdatePieceList(false);
+            }
+            finally
+            {
+                this.Cursor = Cursors.Default;
+                change_status("Rename successful");
+            }
+
+
         }
 
 
@@ -430,7 +477,7 @@ namespace MusicLib
 
         private void DeletePiece()
         {
-            if (currentPiece == null) return;
+            if (currentPiece == null) { MessageBox.Show("null1"); return; }
             if (SupressUpdate) return;
 
             try
@@ -444,11 +491,12 @@ namespace MusicLib
 
                 currentPiece.Delete();
                 dg.ClearSelection();
-                dg.CurrentCell = dg[1, (dg.CurrentCell.RowIndex == dg.Rows.Count) ?
-                                        dg.CurrentCell.RowIndex - 1 : dg.CurrentCell.RowIndex + 1];
-                dg.CurrentCell.Selected = true;
+                dg.Rows.Remove(dg.Rows[dg.CurrentCell.RowIndex]);
+                //dg.CurrentCell = dg[1, (dg.CurrentCell.RowIndex == dg.Rows.Count) ?
+                //                        dg.CurrentCell.RowIndex - 1 : dg.CurrentCell.RowIndex + 1];
 
                 SupressUpdate = false;
+                dg.CurrentCell.Selected = true;
                 UpdatePieceList(true);
             }
             finally
@@ -504,8 +552,8 @@ namespace MusicLib
                     current_value = dg[1, dg.CurrentRow.Index].Value.ToString();
 
                 SupressUpdate = false;
-                dg.Rows.Clear();
                 dg.ClearSelection();
+                dg.Rows.Clear();
                 SupressUpdate = true;
 
                 if (txbComposer.SelectedValue != null)
@@ -531,16 +579,18 @@ namespace MusicLib
                     int foundrow = -1;
                     if ((foundrow = dg.FindFirstRow(current_value, 1)) >= 0)
                     {
-                        dg.CurrentCell = dg[1, foundrow];
                         SupressUpdate = false;
+                        dg.CurrentCell = dg[1, foundrow];
                         dg.CurrentCell.Selected = true;
                         return;
                     }
                 }
-
-                dg.CurrentCell = dg[1, 0];
-                SupressUpdate = false;
-                dg.ClearSelection();
+                else
+                {
+                    SupressUpdate = false;
+                    dg.CurrentCell = dg[1, 0];
+                    dg.ClearSelection();
+                }
             }
             finally
             {

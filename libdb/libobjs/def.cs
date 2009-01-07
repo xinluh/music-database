@@ -72,9 +72,11 @@ namespace libdb
         
             if (!Exists(db_structure.GetTable(this), id))
             {
-                throw new Exception(string.Format(
-                    "id = {0} in {1} is not found; Fill() failed",
-                    id, db_structure.GetTableName(this)));
+                this.ID = 0;
+                return;
+                //throw new Exception(string.Format(
+                //    "id = {0} in {1} is not found; Fill() failed",
+                //    id, db_structure.GetTableName(this)));
             }
 
             // make sql query string...
@@ -146,19 +148,19 @@ namespace libdb
 
             return 0;
         }
-        public virtual int Update()
+        public virtual void Update()
         {
             if (!db_structure.IsAutoupdate(this)) 
-                return 0;
-            if (this.ID == 0) 
-                return Insert();
+                return;
+            if (this.ID == 0)
+                throw new Exception("The record does not exist in database; try Insert() instead of Update()");
             if (this.IsEquivalent(old_values)) //nothing changed; no update
-                return 0;
+                return;
 
             ArrayList values = get_values_for_db();
 
             if (values == null || values.Count == 0)
-                return 0; //nothing to update...
+                return; //nothing to update...
 
             // get the right format for update...
             string[] _columns = db_structure.CleanUpForWrite(this, db_structure.GetFieldNames(this));
@@ -169,7 +171,7 @@ namespace libdb
                 sb.Append(_columns[i] + " = " + _values[i] + ",");
 
             if (sb.Length == 0)
-                return 0; //nothing to update, again...
+                return; //nothing to update, again...
 
             sb.Remove(sb.Length - 1, 1); //removing ending ","
 
@@ -179,11 +181,11 @@ namespace libdb
 
             Database.ExecuteNonQuery(str);
 
-            return 0;
+            return;
         }
 
         /// <summary>
-        /// Delete the record from database. Warning: nothing is checked! Be prepared to catch any exception!
+        /// Delete the record from database. 
         /// </summary>
         /// <returns></returns>
         public virtual void Delete()
