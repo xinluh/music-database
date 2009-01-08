@@ -71,7 +71,7 @@ namespace libdb
         }
 
         // the "createClone" param is to avoid infinite loop...
-        internal virtual void Fill(int id, bool createClone)
+        private void Fill(int id, bool createClone)
         {
             if (!db_structure.IsAutoupdate(this)) return;
         
