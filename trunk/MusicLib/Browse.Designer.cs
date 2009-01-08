@@ -30,10 +30,13 @@
         {
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
-            this.txbGenre = new CustomForm.AutoCompleteTextBox();
-            this.txbComposer = new CustomForm.AutoCompleteTextBox();
+            this.tabControlMode = new System.Windows.Forms.TabControl();
+            this.tabPageSearch = new System.Windows.Forms.TabPage();
             this.label2 = new System.Windows.Forms.Label();
+            this.txbGenre = new CustomForm.AutoCompleteTextBox();
             this.label1 = new System.Windows.Forms.Label();
+            this.txbComposer = new CustomForm.AutoCompleteTextBox();
+            this.tabPageTray = new System.Windows.Forms.TabPage();
             this.txbFilter = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
             this.dg = new System.Windows.Forms.DataGridView();
@@ -41,21 +44,23 @@
             this.PieceName = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ParentID = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.tabControl = new System.Windows.Forms.TabControl();
-            this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.tabPageDetail = new System.Windows.Forms.TabPage();
             this.clbDetail = new System.Windows.Forms.CheckedListBox();
-            this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.tabPageDetailEdit = new System.Windows.Forms.TabPage();
             this.txbEdit = new System.Windows.Forms.TextBox();
-            this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.tabPageProperties = new System.Windows.Forms.TabPage();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
             this.splitContainer2.Panel1.SuspendLayout();
             this.splitContainer2.Panel2.SuspendLayout();
             this.splitContainer2.SuspendLayout();
+            this.tabControlMode.SuspendLayout();
+            this.tabPageSearch.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dg)).BeginInit();
             this.tabControl.SuspendLayout();
-            this.tabPage1.SuspendLayout();
-            this.tabPage2.SuspendLayout();
+            this.tabPageDetail.SuspendLayout();
+            this.tabPageDetailEdit.SuspendLayout();
             this.SuspendLayout();
             // 
             // splitContainer1
@@ -89,10 +94,7 @@
             // splitContainer2.Panel1
             // 
             this.splitContainer2.Panel1.BackColor = System.Drawing.SystemColors.Control;
-            this.splitContainer2.Panel1.Controls.Add(this.txbGenre);
-            this.splitContainer2.Panel1.Controls.Add(this.txbComposer);
-            this.splitContainer2.Panel1.Controls.Add(this.label2);
-            this.splitContainer2.Panel1.Controls.Add(this.label1);
+            this.splitContainer2.Panel1.Controls.Add(this.tabControlMode);
             // 
             // splitContainer2.Panel2
             // 
@@ -100,10 +102,47 @@
             this.splitContainer2.Panel2.Controls.Add(this.label3);
             this.splitContainer2.Panel2.Controls.Add(this.dg);
             this.splitContainer2.Size = new System.Drawing.Size(256, 222);
-            this.splitContainer2.SplitterDistance = 41;
+            this.splitContainer2.SplitterDistance = 36;
             this.splitContainer2.SplitterWidth = 1;
             this.splitContainer2.TabIndex = 0;
             this.splitContainer2.TabStop = false;
+            // 
+            // tabControlMode
+            // 
+            this.tabControlMode.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.tabControlMode.Controls.Add(this.tabPageSearch);
+            this.tabControlMode.Controls.Add(this.tabPageTray);
+            this.tabControlMode.Location = new System.Drawing.Point(0, -24);
+            this.tabControlMode.Name = "tabControlMode";
+            this.tabControlMode.SelectedIndex = 0;
+            this.tabControlMode.Size = new System.Drawing.Size(256, 65);
+            this.tabControlMode.TabIndex = 4;
+            this.tabControlMode.TabStop = false;
+            // 
+            // tabPageSearch
+            // 
+            this.tabPageSearch.BackColor = System.Drawing.SystemColors.Control;
+            this.tabPageSearch.Controls.Add(this.label2);
+            this.tabPageSearch.Controls.Add(this.txbGenre);
+            this.tabPageSearch.Controls.Add(this.label1);
+            this.tabPageSearch.Controls.Add(this.txbComposer);
+            this.tabPageSearch.Location = new System.Drawing.Point(4, 22);
+            this.tabPageSearch.Margin = new System.Windows.Forms.Padding(0);
+            this.tabPageSearch.Name = "tabPageSearch";
+            this.tabPageSearch.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPageSearch.Size = new System.Drawing.Size(248, 39);
+            this.tabPageSearch.TabIndex = 1;
+            this.tabPageSearch.Text = "tabPage5";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(-2, 22);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(50, 13);
+            this.label2.TabIndex = 2;
+            this.label2.Text = "&Genre(s):";
             // 
             // txbGenre
             // 
@@ -111,7 +150,7 @@
             this.txbGenre.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.txbGenre.Font = new System.Drawing.Font("Courier New", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txbGenre.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(192)))));
-            this.txbGenre.Location = new System.Drawing.Point(66, 20);
+            this.txbGenre.Location = new System.Drawing.Point(61, 21);
             this.txbGenre.MatchDisplayString = true;
             this.txbGenre.MatchMode = CustomForm.AutoCompleteTextBox.MatchModes.Contains;
             this.txbGenre.Name = "txbGenre";
@@ -124,13 +163,22 @@
             this.txbGenre.TabIndex = 3;
             this.txbGenre.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txb_KeyDown);
             // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(-2, 5);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(57, 13);
+            this.label1.TabIndex = 0;
+            this.label1.Text = "&Composer:";
+            // 
             // txbComposer
             // 
             this.txbComposer.BackColor = System.Drawing.SystemColors.Control;
             this.txbComposer.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.txbComposer.Font = new System.Drawing.Font("Courier New", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txbComposer.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(192)))));
-            this.txbComposer.Location = new System.Drawing.Point(66, 3);
+            this.txbComposer.Location = new System.Drawing.Point(61, 4);
             this.txbComposer.MatchDisplayString = true;
             this.txbComposer.MatchMode = CustomForm.AutoCompleteTextBox.MatchModes.Contains;
             this.txbComposer.Name = "txbComposer";
@@ -143,23 +191,15 @@
             this.txbComposer.TabIndex = 1;
             this.txbComposer.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txb_KeyDown);
             // 
-            // label2
+            // tabPageTray
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(3, 21);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(50, 13);
-            this.label2.TabIndex = 2;
-            this.label2.Text = "&Genre(s):";
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(3, 4);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(57, 13);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "&Composer:";
+            this.tabPageTray.BackColor = System.Drawing.SystemColors.Control;
+            this.tabPageTray.Location = new System.Drawing.Point(4, 22);
+            this.tabPageTray.Name = "tabPageTray";
+            this.tabPageTray.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPageTray.Size = new System.Drawing.Size(248, 39);
+            this.tabPageTray.TabIndex = 0;
+            this.tabPageTray.Text = "tabPage4";
             // 
             // txbFilter
             // 
@@ -170,7 +210,7 @@
             this.txbFilter.ForeColor = System.Drawing.SystemColors.ControlText;
             this.txbFilter.Location = new System.Drawing.Point(41, 0);
             this.txbFilter.Name = "txbFilter";
-            this.txbFilter.Size = new System.Drawing.Size(212, 20);
+            this.txbFilter.Size = new System.Drawing.Size(213, 20);
             this.txbFilter.TabIndex = 1;
             this.txbFilter.Text = "(none)";
             // 
@@ -206,7 +246,7 @@
             this.dg.RowHeadersVisible = false;
             this.dg.RowTemplate.Height = 16;
             this.dg.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dg.Size = new System.Drawing.Size(256, 154);
+            this.dg.Size = new System.Drawing.Size(256, 159);
             this.dg.TabIndex = 2;
             // 
             // id
@@ -230,9 +270,9 @@
             // 
             // tabControl
             // 
-            this.tabControl.Controls.Add(this.tabPage1);
-            this.tabControl.Controls.Add(this.tabPage2);
-            this.tabControl.Controls.Add(this.tabPage3);
+            this.tabControl.Controls.Add(this.tabPageDetail);
+            this.tabControl.Controls.Add(this.tabPageDetailEdit);
+            this.tabControl.Controls.Add(this.tabPageProperties);
             this.tabControl.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControl.Location = new System.Drawing.Point(0, 0);
             this.tabControl.Name = "tabControl";
@@ -240,16 +280,16 @@
             this.tabControl.Size = new System.Drawing.Size(256, 174);
             this.tabControl.TabIndex = 0;
             // 
-            // tabPage1
+            // tabPageDetail
             // 
-            this.tabPage1.Controls.Add(this.clbDetail);
-            this.tabPage1.Location = new System.Drawing.Point(4, 22);
-            this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(248, 148);
-            this.tabPage1.TabIndex = 0;
-            this.tabPage1.Text = "Movements";
-            this.tabPage1.UseVisualStyleBackColor = true;
+            this.tabPageDetail.Controls.Add(this.clbDetail);
+            this.tabPageDetail.Location = new System.Drawing.Point(4, 22);
+            this.tabPageDetail.Name = "tabPageDetail";
+            this.tabPageDetail.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPageDetail.Size = new System.Drawing.Size(248, 148);
+            this.tabPageDetail.TabIndex = 0;
+            this.tabPageDetail.Text = "Movements";
+            this.tabPageDetail.UseVisualStyleBackColor = true;
             // 
             // clbDetail
             // 
@@ -270,16 +310,16 @@
             this.clbDetail.Size = new System.Drawing.Size(242, 135);
             this.clbDetail.TabIndex = 0;
             // 
-            // tabPage2
+            // tabPageDetailEdit
             // 
-            this.tabPage2.Controls.Add(this.txbEdit);
-            this.tabPage2.Location = new System.Drawing.Point(4, 22);
-            this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(248, 148);
-            this.tabPage2.TabIndex = 1;
-            this.tabPage2.Text = "Edit";
-            this.tabPage2.UseVisualStyleBackColor = true;
+            this.tabPageDetailEdit.Controls.Add(this.txbEdit);
+            this.tabPageDetailEdit.Location = new System.Drawing.Point(4, 22);
+            this.tabPageDetailEdit.Name = "tabPageDetailEdit";
+            this.tabPageDetailEdit.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPageDetailEdit.Size = new System.Drawing.Size(248, 148);
+            this.tabPageDetailEdit.TabIndex = 1;
+            this.tabPageDetailEdit.Text = "Edit";
+            this.tabPageDetailEdit.UseVisualStyleBackColor = true;
             // 
             // txbEdit
             // 
@@ -291,15 +331,15 @@
             this.txbEdit.Size = new System.Drawing.Size(242, 142);
             this.txbEdit.TabIndex = 3;
             // 
-            // tabPage3
+            // tabPageProperties
             // 
-            this.tabPage3.Location = new System.Drawing.Point(4, 22);
-            this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage3.Size = new System.Drawing.Size(248, 148);
-            this.tabPage3.TabIndex = 2;
-            this.tabPage3.Text = "Properties";
-            this.tabPage3.UseVisualStyleBackColor = true;
+            this.tabPageProperties.Location = new System.Drawing.Point(4, 22);
+            this.tabPageProperties.Name = "tabPageProperties";
+            this.tabPageProperties.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPageProperties.Size = new System.Drawing.Size(248, 148);
+            this.tabPageProperties.TabIndex = 2;
+            this.tabPageProperties.Text = "Properties";
+            this.tabPageProperties.UseVisualStyleBackColor = true;
             // 
             // Browse
             // 
@@ -312,15 +352,17 @@
             this.splitContainer1.Panel2.ResumeLayout(false);
             this.splitContainer1.ResumeLayout(false);
             this.splitContainer2.Panel1.ResumeLayout(false);
-            this.splitContainer2.Panel1.PerformLayout();
             this.splitContainer2.Panel2.ResumeLayout(false);
             this.splitContainer2.Panel2.PerformLayout();
             this.splitContainer2.ResumeLayout(false);
+            this.tabControlMode.ResumeLayout(false);
+            this.tabPageSearch.ResumeLayout(false);
+            this.tabPageSearch.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dg)).EndInit();
             this.tabControl.ResumeLayout(false);
-            this.tabPage1.ResumeLayout(false);
-            this.tabPage2.ResumeLayout(false);
-            this.tabPage2.PerformLayout();
+            this.tabPageDetail.ResumeLayout(false);
+            this.tabPageDetailEdit.ResumeLayout(false);
+            this.tabPageDetailEdit.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -331,8 +373,8 @@
         private System.Windows.Forms.SplitContainer splitContainer2;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TabControl tabControl;
-        private System.Windows.Forms.TabPage tabPage1;
-        private System.Windows.Forms.TabPage tabPage2;
+        private System.Windows.Forms.TabPage tabPageDetail;
+        private System.Windows.Forms.TabPage tabPageDetailEdit;
         private System.Windows.Forms.DataGridView dg;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
@@ -342,8 +384,11 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn id;
         private System.Windows.Forms.DataGridViewTextBoxColumn PieceName;
         private System.Windows.Forms.DataGridViewTextBoxColumn ParentID;
-        private System.Windows.Forms.TabPage tabPage3;
+        private System.Windows.Forms.TabPage tabPageProperties;
         private System.Windows.Forms.CheckedListBox clbDetail;
         private System.Windows.Forms.TextBox txbEdit;
+        private System.Windows.Forms.TabControl tabControlMode;
+        private System.Windows.Forms.TabPage tabPageTray;
+        private System.Windows.Forms.TabPage tabPageSearch;
     }
 }

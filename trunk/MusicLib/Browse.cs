@@ -47,6 +47,11 @@ namespace MusicLib
                 status_reset_timer.Enabled = false;
             };
 
+            txbComposer.Focus();
+
+            Rectangle rect = new Rectangle(tabPageSearch.Left, tabPageSearch.Top, tabPageSearch.Width, tabPageSearch.Height);
+            tabControlMode.Region = new Region(rect);
+
             txbComposer.Text = TextBoxDefaultAll;
             txbComposer.PopupWidth = -1;
             txbComposer.ItemSelected += (sender, e) =>
@@ -216,7 +221,7 @@ namespace MusicLib
             tabControl.GotFocus += (sender, e) => this.SelectNextControl(tabControl, true, true, true, true);
             tabControl.Deselecting += (sender, e) =>
             {
-                if (e.TabPage == tabPage2)
+                if (e.TabPage == tabPageDetailEdit)
                 {
                     if (string.IsNullOrEmpty(txbEdit.Text.Trim()) || ((currentPiece.Details != null &&
                         string.Join("", currentPiece.Details) == string.Join("", txbEdit.Lines))))
@@ -778,6 +783,16 @@ namespace MusicLib
                 return;
             e.Handled = true;
             e.SuppressKeyPress = true;
+        }
+
+
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+            // prevent the shortcut keys control-tab control-shift tab on tabControlMode
+            if (tabControlMode.ContainsFocus && Convert.ToBoolean(keyData & Keys.Tab | Keys.Control))
+                return true;
+            else
+                return base.ProcessCmdKey(ref msg, keyData);
         }
         
 
