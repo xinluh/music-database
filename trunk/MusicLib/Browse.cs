@@ -49,6 +49,7 @@ namespace MusicLib
 
             txbComposer.Focus();
 
+            // hide the tabs of tabControlMode
             Rectangle rect = new Rectangle(tabPageSearch.Left, tabPageSearch.Top, tabPageSearch.Width, tabPageSearch.Height);
             tabControlMode.Region = new Region(rect);
 
@@ -789,7 +790,8 @@ namespace MusicLib
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
             // prevent the shortcut keys control-tab control-shift tab on tabControlMode
-            if (tabControlMode.ContainsFocus && Convert.ToBoolean(keyData & Keys.Tab | Keys.Control))
+            if (tabControlMode.ContainsFocus && 
+                (keyData == (keyData & Keys.Tab | Keys.Control) || keyData == (keyData & Keys.Tab | Keys.Control | Keys.Shift)))
                 return true;
             else
                 return base.ProcessCmdKey(ref msg, keyData);
