@@ -51,6 +51,7 @@ namespace libdb
             {
                 parse_name(name);
                 ID = GuessID();
+                if (ID > 0) Fill(ID);
             }
 
             public int GuessID()
@@ -233,17 +234,17 @@ namespace libdb
             return _ArtistType.GuessID(t) != 0;
         }
 
-        public override int Insert()
+        public override void Insert()
         {
-            if (name.ID == 0) name.Insert();
-            if (type.ID == 0) type.Insert();
-            return base.Insert();
+            name.Commit();
+            type.Commit();
+            base.Insert();
         }
 
         public override void Update()
         {
-            name.Update();
-            type.Update();
+            name.Commit();
+            type.Commit();
             base.Update();
         }
     }

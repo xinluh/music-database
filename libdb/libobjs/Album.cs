@@ -98,11 +98,10 @@ namespace libdb
 
         #endregion
 
-        public override int Insert()
+        public override void Insert()
         {
             this.label.Update();
-
-            return base.Insert();
+            base.Insert();
         }
 
         internal void WriteToTag(Tag tag)

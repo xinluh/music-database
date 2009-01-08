@@ -53,6 +53,9 @@ namespace MusicLib
             {
                 UpdateGenreList();
                 UpdatePieceList(false);
+
+                if (txbComposer.SelectedItem != null)
+                    txbFilter.Focus();
             };
             txbComposer.TextChanged += (sender, e) =>
             {
@@ -80,6 +83,15 @@ namespace MusicLib
                     txbComposer.HideAutoCompleteList();
                     RenameComposer(id, "");
                 }
+                else if (e.KeyData == Keys.Delete && txbComposer.HighlightedItem != null)
+                {
+                    int id = int.Parse(txbComposer.HighlightedValue.ToString());
+                    txbComposer.HideAutoCompleteList();
+                    DeleteComposer(id);
+                }
+                else return;
+
+                e.Handled = true;
             };
             txbComposer.LostFocus += new EventHandler(txb_LostFocus);
 
@@ -262,12 +274,13 @@ namespace MusicLib
         }
 
         
+        
         /// <summary>
         /// Must call before using; handles important procedures such as connecting to DB.
         /// </summary>
         public void Initialize()
         {
-            Database.Open();
+            Database.Open("music.db3");
 
             artistSearch = new ArtistSearch(ArtistSearch.Fields.ID, ArtistSearch.Fields.FullName);
             artistSearch.AddTypeToSearch(ArtistSearch.TypeCategory.Composers);
@@ -291,7 +304,7 @@ namespace MusicLib
         public void StartNewSearch()
         {
             txbComposer.Focus();
-            txbComposer.Clear();
+            txbComposer.SelectAll();
         }
         /// <summary>
         /// Update the screen (get data again from database).
@@ -377,7 +390,6 @@ namespace MusicLib
                 change_status("Rename successful");
             }
         }
-
         private void ChangeDetail(string[] lines)
         {
             if (string.IsNullOrEmpty(txbEdit.Text.Trim()) || ((currentPiece.Details != null &&
@@ -473,6 +485,22 @@ namespace MusicLib
             {
                 SupressUpdate = false;
             }
+        }
+
+        private void DeleteComposer(int id)
+        {
+            if (id == 0) return;
+
+            // ask for confirmation
+            if (MessageBox.Show("Are you sure to delete the composer?\nThis is not reversible!",
+                "Delete Composer", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) != DialogResult.Yes)
+                return;
+
+            Artist a = new Artist(id);
+            a.Delete();
+            UpdateArtistList();
+            txbComposer.SetTextAndSelect(a.GetName(Artist.NameFormats.Last_First));
+            txbComposer.SelectAll();
         }
 
         private void DeletePiece()
@@ -718,12 +746,22 @@ namespace MusicLib
                 StartNewSearch();
             else if (e.KeyData == Keys.F5)
                 UpdateData();
+            else if (e.KeyData == (Keys.Control | Keys.O))
+            {
+                Database.Close();
+                Database.Open("../../../libdb/music.db3");
+                UpdateArtistList();
+                UpdatePieceList(true);
+                MessageBox.Show("DEBUG ONLY: now it is switched to the read database; be careful of making changes!",
+                    "",MessageBoxButtons.OK,MessageBoxIcon.Exclamation);
+                this.BackColor = Color.Red;
+            }
             else
                 return;
             e.Handled = true;
             e.SuppressKeyPress = true;
         }
-
+        
 
         #region Trap key events for entire user control
 
