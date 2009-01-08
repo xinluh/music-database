@@ -505,7 +505,7 @@ namespace MusicLib
 
         private void DeletePiece()
         {
-            if (currentPiece == null) { MessageBox.Show("null1"); return; }
+            if (currentPiece == null && dg.SelectedRows.Count == 0) return;
             if (SupressUpdate) return;
 
             try
@@ -517,9 +517,15 @@ namespace MusicLib
                     "Delete Piece", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) != DialogResult.Yes)
                     return;
 
-                currentPiece.Delete();
-                dg.ClearSelection();
-                dg.Rows.Remove(dg.Rows[dg.CurrentCell.RowIndex]);
+                Piece p;
+                foreach (DataGridViewRow r in dg.SelectedRows)
+                {
+                    p = new Piece(int.Parse(r.Cells[0].Value.ToString()));
+                    p.Delete();
+                    dg.Rows.Remove(r);
+                }
+                //dg.ClearSelection();
+                //dg.Rows.Remove(dg.Rows[dg.CurrentCell.RowIndex]);
                 //dg.CurrentCell = dg[1, (dg.CurrentCell.RowIndex == dg.Rows.Count) ?
                 //                        dg.CurrentCell.RowIndex - 1 : dg.CurrentCell.RowIndex + 1];
 
@@ -576,7 +582,7 @@ namespace MusicLib
 
                 pieceSearch.ClearFilters();
                 string current_value = "";
-                if (dg != null && dg.CurrentCell != null && TryKeepOldSelection)
+                if (TryKeepOldSelection && dg != null && dg.CurrentCell != null && !dg.CurrentRow.IsNewRow)
                     current_value = dg[1, dg.CurrentRow.Index].Value.ToString();
 
                 SupressUpdate = false;
@@ -697,9 +703,11 @@ namespace MusicLib
                 UpdatePieceList(false);
             }
             else if (e.KeyData == Keys.Enter && tb != txbComposer)
-            {
                 this.SelectNextControl((Control)sender, true, true, true, true);
-            }
+            else
+                return;
+
+            e.Handled = true;
         }
 
         void txb_LostFocus(object sender, EventArgs e)
@@ -714,9 +722,7 @@ namespace MusicLib
         {
             CheckedListBox clb = (CheckedListBox)sender;
             if (e.KeyData == Keys.Escape)
-            {
                 dg.Focus();
-            }
             else if (e.KeyData == (Keys.Control | Keys.A))
             {
                 if (clb.Items.Count == 0) return;
@@ -724,20 +730,20 @@ namespace MusicLib
                 bool check = (clb.CheckedItems.Count > 0);
 
                 for (int i = 0; i < clb.Items.Count; i++)
-                {
                     clb.SetItemChecked(i, (!check));
-                }
                 clb.ClearSelected();
             }
             else if (e.KeyData == Keys.F2)
-            {
                 RenamePiece("");
-            }
             else if (e.KeyData == (Keys.Control | Keys.E))
             {
                 tabControl.SelectedTab = tabControl.TabPages[1];
                 tabControl.Focus();
             }
+            else
+                return;
+
+            e.Handled = true;
         }
 
         private void TrappedKeyDown(KeyEventArgs e)
@@ -748,13 +754,25 @@ namespace MusicLib
                 UpdateData();
             else if (e.KeyData == (Keys.Control | Keys.O))
             {
-                Database.Close();
-                Database.Open("../../../libdb/music.db3");
-                UpdateArtistList();
-                UpdatePieceList(true);
-                MessageBox.Show("DEBUG ONLY: now it is switched to the read database; be careful of making changes!",
-                    "",MessageBoxButtons.OK,MessageBoxIcon.Exclamation);
-                this.BackColor = Color.Red;
+                if (this.BackColor == Color.Red)
+                {
+                    Database.Close();
+                    Database.Open("music.db3");
+                    UpdateArtistList();
+                    UpdatePieceList(true);
+                    this.BackColor = System.Drawing.SystemColors.Control;
+                    change_status("Change back to debug database", false);
+                }
+                else
+                {
+                    Database.Close();
+                    Database.Open("../../../libdb/music.db3");
+                    UpdateArtistList();
+                    UpdatePieceList(true);
+                    this.BackColor = Color.Red;
+                    MessageBox.Show("DEBUG ONLY: now it is switched to the read database; be careful of making changes!",
+                        "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
             }
             else
                 return;

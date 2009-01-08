@@ -45,7 +45,7 @@
             // 
             // txb
             // 
-            this.txb.Location = new System.Drawing.Point(15, 25);
+            this.txb.Location = new System.Drawing.Point(15, 28);
             this.txb.MatchDisplayString = true;
             this.txb.MatchMode = CustomForm.AutoCompleteTextBox.MatchModes.Contains;
             this.txb.Name = "txb";
@@ -60,7 +60,7 @@
             // btnOK
             // 
             this.btnOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnOK.Location = new System.Drawing.Point(108, 56);
+            this.btnOK.Location = new System.Drawing.Point(108, 59);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(75, 23);
             this.btnOK.TabIndex = 2;
@@ -72,7 +72,7 @@
             // 
             this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnCancel.Location = new System.Drawing.Point(189, 56);
+            this.btnCancel.Location = new System.Drawing.Point(189, 59);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(75, 23);
             this.btnCancel.TabIndex = 3;
@@ -86,7 +86,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.btnCancel;
-            this.ClientSize = new System.Drawing.Size(276, 85);
+            this.ClientSize = new System.Drawing.Size(276, 88);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnOK);
             this.Controls.Add(this.txb);
