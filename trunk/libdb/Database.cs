@@ -9,11 +9,11 @@ namespace libdb
 {
     public class Database
     {
-        private static string db_string = "music.db3";
         private static SQLiteClient sqlclient;
         private static bool transaction = false;
         private static string sqls = "";
-
+        private static string currentDBLocation = "";
+        
         public enum OutputFormats
         {
             Nothing = 0,
@@ -22,13 +22,17 @@ namespace libdb
             DataGridView,
         }
 
-        public static int Open()
+        public static int Open(string db_location)
         {
             try
             {
-                if (sqlclient == null)
+                if (!System.IO.File.Exists(db_location))
+                    throw new System.IO.FileNotFoundException("Cannot open non-existent database!", db_location);
+                if (sqlclient == null || (sqlclient != null && 
+                    System.IO.Path.GetFullPath(db_location) != System.IO.Path.GetFullPath(currentDBLocation)))
                 {
-                    sqlclient = new SQLiteClient(db_string);
+                    sqlclient = new SQLiteClient(db_location);
+                    currentDBLocation = db_location;
                 }
             }
             catch (SQLiteException e)

@@ -126,20 +126,27 @@ namespace libdb
                 throw new Exception("Database connection returns error",e);
             }
         }
-        public virtual int Insert()
+        /// <summary>
+        /// Just a convenient alias for Insert() or update(): Insert() if this.ID == 0; else Update()
+        /// </summary>
+        public virtual void Commit()
         {
-            if (!db_structure.IsAutoupdate(this)) return 0;
+            if (ID == 0) Insert();
+            else Update();
+        }
+        public virtual void Insert()
+        {
+            if (!db_structure.IsAutoupdate(this)) return;
 
             if (this.ID != 0)
             {
-                Debug.HandleException(new Exception(string.Format(
-                    "id = {0} on {1} already exists; insert failed", this.ID, this.GetType().Name)));
-                return 1;
+                throw new Exception(string.Format(
+                    "id = {0} on {1} already exists; insert failed", this.ID, this.GetType().Name));
             }
 
             ArrayList values = get_values_for_db();
 
-            if (values == null) return 1;
+            if (values == null) return;
 
             // make sql query string...
             string str = String.Format("INSERT INTO {0} ({1}) VALUES ({2})",
@@ -150,7 +157,7 @@ namespace libdb
             Database.ExecuteNonQuery(str);
             this.ID = Database.LastInsertRowID();
 
-            return 0;
+            return;
         }
         public virtual void Update()
         {
@@ -196,6 +203,7 @@ namespace libdb
         {
             Database.ExecuteNonQuery(string.Format("DELETE FROM {0} WHERE id = {1}",
                 db_structure.GetTableName(this),this.ID));
+            if (!Exists(db_structure.GetTable(this), this.ID)) this.ID = 0; // delete successful!
         }
 
         /// <summary>
@@ -211,13 +219,6 @@ namespace libdb
         
         public virtual libobj Clone()
         {
-            //if (db_structure.IsAutoupdate(this))
-            //{
-            //    libobj copy = (libobj)System.Activator.CreateInstance(this.GetType());
-            //    //TODO
-            //    return copy;
-            //}
-            // todo: actually make a copy (including changes since retrieved from db)!
             libobj o = (libobj)System.Activator.CreateInstance(this.GetType());
             o.Fill(this.ID, false);
             return o;

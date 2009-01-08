@@ -123,12 +123,10 @@ namespace libdb
             base.Update();
         }
 
-        public override int Insert()
+        public override void Insert()
         {
-            if (Composer.ID == 0)
-                Composer.Insert();
-
-            return base.Insert();
+            Composer.Commit();
+            base.Insert();
         }
 
 		internal void ReadFromTag(Tag tag)
