@@ -296,7 +296,7 @@ CREATE TRIGGER "tr_created_date_album"
    ON main.tblAlbum
 BEGIN
     UPDATE tblAlbum 
-    SET created_date = strftime('%m/%d/%Y %H:%M','now', 'localtime')
+    SET created_date = strftime('%Y-%m-%dT%H:%M','now', 'localtime')
     WHERE id = new.id;
 END;
 CREATE TRIGGER "tr_created_date_artist"
@@ -304,7 +304,7 @@ CREATE TRIGGER "tr_created_date_artist"
    ON main.tblArtist
 BEGIN
     UPDATE tblArtist
-    SET created_date = strftime('%m/%d/%Y %H:%M','now', 'localtime')
+    SET created_date = strftime('%Y-%m-%dT%H:%M','now', 'localtime')
     WHERE id = new.id;
 END;
 CREATE TRIGGER "tr_created_date_artistname"
@@ -312,7 +312,7 @@ CREATE TRIGGER "tr_created_date_artistname"
    ON main.tblArtistName
 BEGIN
     UPDATE tblArtistName
-    SET created_date = strftime('%m/%d/%Y %H:%M','now', 'localtime')
+    SET created_date = strftime('%Y-%m-%dT%H:%M','now', 'localtime')
     WHERE id = new.id;
 END;
 CREATE TRIGGER "tr_created_date_artisttype"
@@ -320,7 +320,7 @@ CREATE TRIGGER "tr_created_date_artisttype"
    ON main.tblArtistType
 BEGIN
     UPDATE tblArtistType
-    SET created_date = strftime('%m/%d/%Y %H:%M','now', 'localtime')
+    SET created_date = strftime('%Y-%m-%dT%H:%M','now', 'localtime')
     WHERE id = new.id;
 END;
 CREATE TRIGGER "tr_created_date_label"
@@ -328,7 +328,7 @@ CREATE TRIGGER "tr_created_date_label"
    ON main.'tblLabel'
 BEGIN
     UPDATE tblLabel
-    SET created_date = strftime('%m/%d/%Y %H:%M','now', 'localtime')
+    SET created_date = strftime('%Y-%m-%dT%H:%M','now', 'localtime')
     WHERE id = new.id;
 END;
 CREATE TRIGGER "tr_created_date_piece"
@@ -336,7 +336,7 @@ CREATE TRIGGER "tr_created_date_piece"
    ON main.'tblPiece'
 BEGIN
     UPDATE tblPiece
-    SET created_date = strftime('%m/%d/%Y %H:%M','now', 'localtime')
+    SET created_date = strftime('%Y-%m-%dT%H:%M','now', 'localtime')
     WHERE id = new.id;
 END;
 CREATE TRIGGER "tr_created_date_track"
@@ -344,7 +344,7 @@ CREATE TRIGGER "tr_created_date_track"
    ON main.tblTrack
 BEGIN
     UPDATE tblTrack
-    SET created_date = strftime('%m/%d/%Y %H:%M','now', 'localtime')
+    SET created_date = strftime('%Y-%m-%dT%H:%M','now', 'localtime')
     WHERE id = new.id;
 END;
 CREATE TRIGGER "tr_set_changed_album"
@@ -420,48 +420,48 @@ CREATE TRIGGER "tr_set_mod_date_album"
 BEGIN
     UPDATE tblAlbum 
     SET modified_date = 
-        strftime('%m/%d/%Y %H:%M','now', 'localtime')
+        strftime('%Y-%m-%dT%H:%M','now', 'localtime')
     WHERE id = new.id;
 END;
 CREATE TRIGGER "tr_set_mod_date_artist"
    AFTER  UPDATE ON main.tblArtist
 BEGIN
     UPDATE tblArtist
-    SET modified_date =  strftime('%m/%d/%Y %H:%M','now', 'localtime')
+    SET modified_date =  strftime('%Y-%m-%dT%H:%M','now', 'localtime')
     WHERE id = new.id;
 END;
 CREATE TRIGGER "tr_set_mod_date_artistname"
    AFTER  UPDATE ON main.tblArtistName
 BEGIN
     UPDATE tblArtistName
-    SET modified_date = strftime('%m/%d/%Y %H:%M','now', 'localtime')
+    SET modified_date = strftime('%Y-%m-%dT%H:%M','now', 'localtime')
     WHERE id = new.id;
 END;
 CREATE TRIGGER "tr_set_mod_date_artisttype"
    AFTER  UPDATE ON main.tblArtistType
 BEGIN
     UPDATE tblArtistType
-    SET modified_date = strftime('%m/%d/%Y %H:%M','now', 'localtime')
+    SET modified_date = strftime('%Y-%m-%dT%H:%M','now', 'localtime')
     WHERE id = new.id;
 END;
 CREATE TRIGGER "tr_set_mod_date_label"
    AFTER  UPDATE ON main.tblLabel
 BEGIN
     UPDATE tblLabel
-    SET modified_date = strftime('%m/%d/%Y %H:%M','now', 'localtime')
+    SET modified_date = strftime('%Y-%m-%dT%H:%M','now', 'localtime')
     WHERE id = new.id;
 END;
 CREATE TRIGGER "tr_set_mod_date_piece"
    AFTER  UPDATE ON main.tblpiece
 BEGIN
     UPDATE tblpiece
-    SET modified_date = strftime('%m/%d/%Y %H:%M','now', 'localtime')
+    SET modified_date = strftime('%Y-%m-%dT%H:%M','now', 'localtime')
     WHERE id = new.id;
 END;
 CREATE TRIGGER "tr_set_mod_date_track"
    AFTER  UPDATE ON main.tblTrack
 BEGIN
     UPDATE tblTrack
-    SET modified_date = strftime('%m/%d/%Y %H:%M','now', 'localtime')
+    SET modified_date = strftime('%Y-%m-%dT%H:%M','now', 'localtime')
     WHERE id = new.id;
 END;
