@@ -276,7 +276,7 @@ END;
 CREATE TRIGGER "tr_archive_old_name"
    AFTER UPDATE OF name ON main.tblPiece
    WHEN (old.name != new.name AND 
-               (old_name IS NULL OR old_name 
+               (new.old_name IS NULL OR new.old_name 
 	       NOT LIKE '%' || old.name || '|%'))
 BEGIN
     UPDATE tblPiece SET old_name =  
