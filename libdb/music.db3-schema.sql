@@ -1,3 +1,7 @@
+CREATE TABLE "log" (
+    "sql" TEXT NOT NULL,
+    "timestamp" TEXT DEFAULT (strftime('%Y-%m-%dT%H:%M','now', 'localtime'))
+);
 CREATE TABLE 'tblAlbum' (
     "id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
     "name" TEXT UNIQUE NOT NULL,
