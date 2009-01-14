@@ -102,18 +102,12 @@ SELECT tblArtist.id AS id,
 	tblArtistName.last_name || 
 	(CASE
 	WHEN (tblArtistName.first_name IS NOT NULL) THEN
-	 ', ' || tblArtistName.first_name
+	     ', ' || tblArtistName.first_name
 	 ELSE
-	 ''
+	     ''
 	END) AS fullname,
-	tblArtistName.last_name || 
-	(CASE
-	WHEN (tblArtistName.first_name IS NOT NULL) THEN
-	 ', ' || tblArtistName.first_name
-	ELSE
-	''
-	END)
-	|| ' (' || tblArtistType.name || ')' AS fullname_type
+	tblArtistName.alternate_last AS alternate_last,
+	tblArtistName.alternate_first AS alternate_first
 FROM tblArtist, tblArtistName, tblArtistType
 WHERE tblArtist.name_id = tblArtistName.id 
 and tblArtist.type_id = tblArtistType.id;
@@ -280,8 +274,10 @@ FOR EACH ROW BEGIN
       WHERE (SELECT id FROM tblPiece WHERE id = NEW.piece_id) IS NULL;
 END;
 CREATE TRIGGER "tr_archive_old_name"
-   AFTER UPDATE OF name
-   ON main.tblPiece
+   AFTER UPDATE OF name ON main.tblPiece
+   WHEN (old.name != new.name AND 
+               (old_name IS NULL OR old_name 
+	       NOT LIKE '%' || old.name || '|%'))
 BEGIN
     UPDATE tblPiece SET old_name =  
     CASE
