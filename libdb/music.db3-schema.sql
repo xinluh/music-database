@@ -37,17 +37,17 @@ CREATE TABLE "tblArtistName" (
 );
 CREATE TABLE "tblArtistType" (
     "id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-    "name" TEXT NOT NULL,
+    "name" TEXT UNIQUE NOT NULL,
     "created_date" TEXT,
     "modified_date" TEXT
 );
 CREATE TABLE "tblGenre" (
     "id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-    "name" TEXT NOT NULL
+    "name" TEXT UNIQUE NOT NULL
 );
 CREATE TABLE "tblLabel" (
     "id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-    "name" TEXT NOT NULL,
+    "name" TEXT UNIQUE NOT NULL,
     "created_date" TEXT,
     "modified_date" TEXT
 );
