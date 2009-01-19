@@ -6,31 +6,107 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using libdb;
 
 namespace MusicLib.Dialogs
 {
     public partial class Inputbox : Form
     {
+        public enum InputModes
+        {
+            Text,
+            Combo
+        }
+
+        public static Artist GetComposer (Artist defaultComposer)
+        {
+            ArtistSearch s = new ArtistSearch(ArtistSearch.Fields.FullName);
+            s.AddTypeToSearch(ArtistSearch.TypeCategory.Composers);
+
+            Inputbox ib = new Inputbox("Choose a composer: ", s.PerformSearchToScalar().ToArray(),
+                defaultComposer != null ? defaultComposer.GetName(Artist.NameFormats.Last_First) : "",
+                false);
+
+            if (ib.ShowDialog() == DialogResult.Cancel)
+                return null;
+            else
+            {
+                Artist a = new Artist(ib.SelectedItem.ToString(), "composer", false);
+                return a;
+            }
+        }
+
         public Inputbox()
         {
             InitializeComponent();
             this.FormClosing += new FormClosingEventHandler(Inputbox_FormClosing);
         }
 
-
-        public Inputbox(string Prompt,string Default,bool acceptEmptyString) : this()
+        public Inputbox(string Prompt,string Default, bool acceptEmptyString) : this()
         {
+            InputMode = InputModes.Text;
+
             label.Text = Prompt;
             txb.Text = Default;
             AcceptEmptyString = acceptEmptyString;
             txb.SelectAll();
         }
 
+
+        public Inputbox(string Prompt, object[] Choices, string Default, bool acceptNewChoice) : this()
+        {
+            InputMode = InputModes.Combo;
+
+            AcceptNewChoice = acceptNewChoice;
+            SetChoices(Choices);
+            label.Text = Prompt;
+            cmb.Text = Default;
+        }
+
         public bool AcceptEmptyString { get; set; }
+        
+        public bool AcceptNewChoice {
+            get { return cmb.DropDownStyle == ComboBoxStyle.DropDown; }
+            set { cmb.DropDownStyle = value ? ComboBoxStyle.DropDown : ComboBoxStyle.DropDownList; }
+        }
+        
+        public InputModes InputMode 
+        { 
+            get { return txb.Visible? InputModes.Text : InputModes.Combo; }
+            set
+            {
+                txb.Visible = (value == InputModes.Text);
+                cmb.Visible = (value == InputModes.Combo);
+            }
+        }
 
         public string InputText {
-            get {return txb.Text;}
-            set { txb.Text = value; }
+            get { return InputMode == InputModes.Text ? txb.Text : cmb.Text;}
+            set 
+            { 
+                txb.Text = value;
+                cmb.Text = value;
+            }
+        }
+
+        public object SelectedItem
+        {
+            get { return cmb.SelectedItem; }
+        }
+
+        //public void SetAutoCompleteItems(IEnumerable<IList> items, int MatchMember,
+        //    int DisplayMember, int ValueMember)
+        //{
+        //    txb.Items.AddRange(items, MatchMember, DisplayMember, ValueMember);
+        //}
+
+        public void SetChoices(object[] choices)
+        {
+            if (InputMode == InputModes.Combo)
+            {
+                cmb.Items.Clear();
+                cmb.Items.AddRange(choices);
+            }
         }
 
 
@@ -42,7 +118,10 @@ namespace MusicLib.Dialogs
 
         private void btnOK_Click(object sender, EventArgs e)
         {
-            if (txb.Text == "" && !AcceptEmptyString) DialogResult = DialogResult.Cancel;
+            if ((InputMode == InputModes.Text && txb.Text == "" && !AcceptEmptyString) ||
+                 (InputMode == InputModes.Combo && !AcceptNewChoice && cmb.SelectedItem == null)) 
+                DialogResult = DialogResult.Cancel;
+            
             else DialogResult = DialogResult.OK;
         }
 
@@ -50,6 +129,6 @@ namespace MusicLib.Dialogs
         {
             DialogResult = DialogResult.Cancel;
         }
-        
+
     }
 }

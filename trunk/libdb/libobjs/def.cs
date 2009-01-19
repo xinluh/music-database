@@ -4,6 +4,7 @@ using System.Collections;
 using System.Text;
 using System.Reflection;
 using libdb;
+using System.ComponentModel;
 
 namespace libdb
 {
@@ -40,7 +41,9 @@ namespace libdb
 
     public abstract class libobj
     {
+        [ReadOnly(true)]
         public virtual int ID { get; set; }
+
         protected libobj old_values { get; set; }
 
         /// <summary>
@@ -127,7 +130,7 @@ namespace libdb
             }
         }
         /// <summary>
-        /// Just a convenient alias for Insert() or update(): Insert() if this.ID == 0; else Update()
+        /// Just a convenient alias for Insert() or Update(): Insert() if this.ID == 0; else Update()
         /// </summary>
         public virtual void Commit()
         {
@@ -139,25 +142,17 @@ namespace libdb
             if (!db_structure.IsAutoupdate(this)) return;
 
             if (this.ID != 0)
-            {
                 throw new Exception(string.Format(
                     "id = {0} on {1} already exists; insert failed", this.ID, this.GetType().Name));
-            }
 
-            ArrayList values = get_values_for_db();
-
-            if (values == null) return;
-
-            // make sql query string...
-            string str = String.Format("INSERT INTO {0} ({1}) VALUES ({2})",
-                db_structure.GetTableName(this),
-                string.Join(",", db_structure.CleanUpForWrite(this, db_structure.GetFieldNames(this))),
-                string.Join(",", (string[])values.ToArray(typeof(string))));
-
-            Database.ExecuteNonQuery(str);
+            string sql = make_insert_sql();
+            if (string.IsNullOrEmpty(sql)) return;
+            
+            Database.ExecuteNonQuery(sql);
             this.ID = Database.LastInsertRowID();
 
-            return;
+            Database.WriteLog(sql, make_delete_sql());
+            old_values = Clone();
         }
         public virtual void Update()
         {
@@ -168,42 +163,24 @@ namespace libdb
             if (this.IsEquivalent(old_values)) //nothing changed; no update needed
                 return;
 
-            ArrayList values = get_values_for_db();
+            string sql = make_update_sql();
+            if (string.IsNullOrEmpty(sql)) return;
+            
+            Database.ExecuteNonQuery(sql);
 
-            if (values == null || values.Count == 0)
-                return; //nothing to update...
-
-            // get the right format for update...
-            string[] _columns = db_structure.CleanUpForWrite(this, db_structure.GetFieldNames(this));
-            string[] _values = (string[])values.ToArray(typeof(string));
-            StringBuilder sb = new StringBuilder();
-
-            for (int i = 0; i < _columns.Length; i++)
-                sb.Append(_columns[i] + " = " + _values[i] + ",");
-
-            if (sb.Length == 0)
-                return; //nothing to update, again...
-
-            sb.Remove(sb.Length - 1, 1); //removing ending ","
-
-            // make sql query string...
-            string str = String.Format("UPDATE {0} SET {1} WHERE id = {2}",
-                db_structure.GetTableName(this), sb.ToString(), this.ID.ToString());
-
-            Database.ExecuteNonQuery(str);
-
-            return;
+            Database.WriteLog(sql, old_values.make_update_sql());
+            old_values = Clone();
         }
-
-        /// <summary>
-        /// Delete the record from database. 
-        /// </summary>
-        /// <returns></returns>
         public virtual void Delete()
         {
-            Database.ExecuteNonQuery(string.Format("DELETE FROM {0} WHERE id = {1}",
-                db_structure.GetTableName(this),this.ID));
-            if (!Exists(db_structure.GetTable(this), this.ID)) this.ID = 0; // delete successful!
+            string sql = make_delete_sql();
+            Database.ExecuteNonQuery(sql);
+            if (Exists(db_structure.GetTable(this), this.ID))
+                return; // delete failed; don't do anything else...
+            
+            this.ID = 0; // delete successful!
+            Database.WriteLog(sql, old_values.make_insert_sql());
+
         }
 
         /// <summary>
@@ -242,7 +219,44 @@ namespace libdb
 
             return true;
         }
+        private string make_update_sql()
+        {
+            ArrayList values = get_values_for_db();
 
+            if (values == null || values.Count == 0)
+                return null; //nothing to update...
+
+            // get the right format for update...
+            string[] _columns = db_structure.CleanUpForWrite(this, db_structure.GetFieldNames(this));
+            string[] _values = (string[])values.ToArray(typeof(string));
+            StringBuilder sb = new StringBuilder();
+
+            for (int i = 0; i < _columns.Length; i++)
+                sb.Append(_columns[i] + " = " + _values[i] + ",");
+
+            if (sb.Length == 0)
+                return null; //nothing to update, again...
+            sb.Remove(sb.Length - 1, 1); //removing ending ","
+
+            return String.Format("UPDATE {0} SET {1} WHERE id = {2}",
+                db_structure.GetTableName(this), sb.ToString(), this.ID.ToString());
+        }
+        private string make_insert_sql()
+        {
+            ArrayList values = get_values_for_db();
+
+            if (values == null) return null;
+
+            return String.Format("INSERT INTO {0} ({1}) VALUES ({2})",
+                db_structure.GetTableName(this),
+                string.Join(",", db_structure.CleanUpForWrite(this, db_structure.GetFieldNames(this))),
+                string.Join(",", (string[])values.ToArray(typeof(string))));
+        }
+        private string make_delete_sql()
+        {
+            return string.Format("DELETE FROM {0} WHERE id = {1}",
+                db_structure.GetTableName(this), this.ID);
+        }
         private ArrayList get_values_for_db()
         {
             try
@@ -341,7 +355,6 @@ namespace libdb
                             v1.ToString(),v2.ToString()));
             }
         }
-
         internal static int convert_to_db_datatype(
             data_type target_type, object original_value, out object out_value)
         {

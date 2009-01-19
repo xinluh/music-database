@@ -49,6 +49,10 @@ namespace libdb
         {
             return (IEnumerable<IList>) Database.Execute(get_sql(),Database.OutputFormats.IEnumerableOfList,null);
         }
+        public ArrayList PerformSearchToScalar()
+        {
+            return Database.GetFirstColumn(get_sql());
+        }
 
         public System.Windows.Forms.DataGridView PerformSearchToDataGridView(System.Windows.Forms.DataGridView dg)
         {

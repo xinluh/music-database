@@ -15,24 +15,14 @@ namespace CustomForm
 
         public AutoCompleteDataEntry(IList List,int ValueMember, int DisplayMember,int MatchMember)
         {
-            list = List;
-            
-            if (ValueMember >= list.Count || DisplayMember >= list.Count || MatchMember >= list.Count)
-            {
-                throw new ArgumentOutOfRangeException();
-            }
+            Items = List;
 
             value_member = ValueMember;
             display_member = DisplayMember;
             match_member = MatchMember;
         }
         public AutoCompleteDataEntry(int ValueMember, int DisplayMember, int MatchMember)
-        {
-            list = null;
-            value_member = ValueMember;
-            display_member = DisplayMember;
-            match_member = MatchMember;
-        }
+            : this(null,ValueMember,DisplayMember,MatchMember)   {        }
 
 
         /// <summary>
@@ -44,13 +34,10 @@ namespace CustomForm
             set 
             {
                 if (value == null)
-                {
                     throw new NullReferenceException();
-                }
-                if (value_member >= list.Count || display_member >= list.Count || match_member >= list.Count)
-                {
+                if (list!= null && 
+                    (value_member >= list.Count || display_member >= list.Count || match_member >= list.Count))
                     throw new ArgumentOutOfRangeException();
-                } 
                 this.list = value;
             }
         }
@@ -61,13 +48,9 @@ namespace CustomForm
             get
             {
                 if (SplitSeparator != null)
-                {
                     return list[match_member].ToString().Split(SplitSeparator, StringSplitOptions.RemoveEmptyEntries);
-                }
                 else
-                {
                     return new string[] {list[match_member].ToString()};
-                }
             }
         }
 

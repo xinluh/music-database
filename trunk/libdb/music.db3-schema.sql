@@ -1,5 +1,6 @@
 CREATE TABLE "log" (
     "sql" TEXT NOT NULL,
+    "undo_sql" TEXT,
     "timestamp" TEXT DEFAULT (strftime('%Y-%m-%dT%H:%M','now', 'localtime'))
 );
 CREATE TABLE 'tblAlbum' (

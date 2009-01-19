@@ -12,12 +12,16 @@ namespace libdb
     {
         public enum Fields
         {
-            [Des("id")]                 ID        ,
-            [Des("type")]               Type      ,
-            [Des("last_name")]          LastName  ,
-            [Des("first_name")]         FirstName ,
-            [Des("fullname")]           FullName  ,
-            [Des("type_id")]            TypeID    ,
+            [Des("id")]                 ID                   ,
+            [Des("type")]               Type                 ,
+            [Des("last_name")]          LastName             ,
+            [Des("first_name")]         FirstName            ,
+            [Des("fullname")]           FullName             ,
+            [Des("type_id")]            TypeID               ,
+            [Des("alternate_last")]     AlternateLastName    ,
+            [Des("alternate_first")]    AlternateFirstName   ,
+            [Des("coalesce(fullname || '|' || alternate_last || alternate_first, fullname || '|' || alternate_last, fullname)")]
+                                        MatchName            ,
         }
 
         public enum TypeCategory
@@ -82,6 +86,9 @@ public class PieceSearch : SearchBase
             [Des("connector")]          Connector		,
             [Des("composer_id")]        ComposerID		,
             [Des("genre_id")]           GenreID			,
+            [Des("coalesce(name || '|' || old_name, name)")]
+                                        MatchName		,
+
         }
         protected override string table { get { return "tblPiece"; } }
         protected override string orderby { get { return ""; } }

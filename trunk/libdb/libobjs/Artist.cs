@@ -247,5 +247,10 @@ namespace libdb
             type.Commit();
             base.Update();
         }
+
+        public override string ToString()
+        {
+            return GetName(NameFormats.Last_First);
+        }
     }
 }

@@ -49,6 +49,7 @@
             this.tabPageDetailEdit = new System.Windows.Forms.TabPage();
             this.txbEdit = new System.Windows.Forms.TextBox();
             this.tabPageProperties = new System.Windows.Forms.TabPage();
+            this.pgrid = new System.Windows.Forms.PropertyGrid();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
@@ -61,6 +62,7 @@
             this.tabControl.SuspendLayout();
             this.tabPageDetail.SuspendLayout();
             this.tabPageDetailEdit.SuspendLayout();
+            this.tabPageProperties.SuspendLayout();
             this.SuspendLayout();
             // 
             // splitContainer1
@@ -244,9 +246,11 @@
             this.dg.Location = new System.Drawing.Point(0, 26);
             this.dg.Name = "dg";
             this.dg.RowHeadersVisible = false;
+            this.dg.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing;
             this.dg.RowTemplate.Height = 16;
             this.dg.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dg.Size = new System.Drawing.Size(256, 159);
+            this.dg.StandardTab = true;
             this.dg.TabIndex = 2;
             // 
             // id
@@ -333,6 +337,7 @@
             // 
             // tabPageProperties
             // 
+            this.tabPageProperties.Controls.Add(this.pgrid);
             this.tabPageProperties.Location = new System.Drawing.Point(4, 22);
             this.tabPageProperties.Name = "tabPageProperties";
             this.tabPageProperties.Padding = new System.Windows.Forms.Padding(3);
@@ -340,6 +345,19 @@
             this.tabPageProperties.TabIndex = 2;
             this.tabPageProperties.Text = "Properties";
             this.tabPageProperties.UseVisualStyleBackColor = true;
+            // 
+            // pgrid
+            // 
+            this.pgrid.CommandsVisibleIfAvailable = false;
+            this.pgrid.HelpVisible = false;
+            this.pgrid.LineColor = System.Drawing.SystemColors.Control;
+            this.pgrid.Location = new System.Drawing.Point(-4, -2);
+            this.pgrid.Margin = new System.Windows.Forms.Padding(0);
+            this.pgrid.Name = "pgrid";
+            this.pgrid.PropertySort = System.Windows.Forms.PropertySort.NoSort;
+            this.pgrid.Size = new System.Drawing.Size(256, 154);
+            this.pgrid.TabIndex = 0;
+            this.pgrid.ToolbarVisible = false;
             // 
             // Browse
             // 
@@ -363,6 +381,7 @@
             this.tabPageDetail.ResumeLayout(false);
             this.tabPageDetailEdit.ResumeLayout(false);
             this.tabPageDetailEdit.PerformLayout();
+            this.tabPageProperties.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -390,5 +409,6 @@
         private System.Windows.Forms.TabControl tabControlMode;
         private System.Windows.Forms.TabPage tabPageTray;
         private System.Windows.Forms.TabPage tabPageSearch;
+        private System.Windows.Forms.PropertyGrid pgrid;
     }
 }

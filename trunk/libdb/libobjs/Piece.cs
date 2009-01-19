@@ -4,6 +4,7 @@ using System.Collections;
 using System.Text;
 using System.Reflection;
 using libdb;
+using System.ComponentModel;
 
 
 namespace libdb
@@ -31,7 +32,7 @@ namespace libdb
                 else
                 {
                     // TODO: add a new genre entry here...
-                    throw new NotImplementedException();
+                    throw new NotImplementedException("Maybe adding a new genre isn't a good idea, yet;)");
                 }
             }
             [AutoUpdateProp("name", data_type.text, false, ReadOnly = true)]
@@ -100,7 +101,8 @@ namespace libdb
 
         [AutoUpdateProp("text", data_type.text, true)]
         public string Text { get; set; }
-
+        
+        [Browsable(false)]
         public string[] Details
         {
             get { return detail_lines; }
@@ -114,17 +116,21 @@ namespace libdb
         }
 
         public Artist Composer { get; set; }
+
+        [ReadOnly(true)]
         public List<Piece> ParentPieces { get; private set; }
 
         public override void Update()
         {
-            Composer.Update();
-            genre.Update();
+            ParentPieces.ForEach(p => p.Commit());
+            Composer.Commit();
+            genre.Commit();
             base.Update();
         }
 
         public override void Insert()
         {
+            ParentPieces.ForEach(p => p.Commit());
             Composer.Commit();
             base.Insert();
         }

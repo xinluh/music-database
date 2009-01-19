@@ -70,6 +70,11 @@ namespace libdb
             }
         }
 
+        public static void WriteLog(string sql, string undo_sql)
+        {
+            ExecuteNonQuery(string.Format("INSERT INTO log (sql, undo_sql) VALUES ({0},{1})", Quote(sql), Quote(undo_sql)));
+        }
+
         public static object GetScalar(string strsql)
         {
             check_connection();
@@ -88,6 +93,20 @@ namespace libdb
                 return 0;
             }, list);
             
+            return list;
+        }
+
+        public static ArrayList GetFirstColumn(string strsql)
+        {
+            check_connection();
+            ArrayList list = new ArrayList();
+            sqlclient.Execute(strsql, (obj, columns, data) =>
+            {
+                ArrayList a = (ArrayList)obj;
+                a.Add(data[0]);
+                return 0;
+            }, list);
+
             return list;
         }
 
@@ -132,7 +151,7 @@ namespace libdb
         }
 
         /// <summary>
-        /// Return string escaped ' in the string; also quoted in '' if outerQuote given true.
+        /// Return string escaped ' in the string; also quoted in '' if outerQuote is true.
         /// </summary>
         /// <param name="str"></param>
         /// <returns></returns>

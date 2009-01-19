@@ -25,6 +25,7 @@ namespace MusicLib
         GenreSearch genreSearch;
         Timer status_reset_timer;
         Piece currentPiece;
+        //List<Piece> currentPieces;
         bool IsScrolling = false;
         bool SupressUpdate = true; // used to prevent unnecessary fetching of data
 
@@ -141,29 +142,28 @@ namespace MusicLib
             };
             dg.KeyDown += (sender, e) =>
             {
-                if ((e.KeyData == Keys.Enter || e.KeyData == Keys.Tab))
-                {
-                    // move to next control
-                    e.Handled = true;
-                    if (clbDetail.Items.Count != 0) clbDetail.SelectedIndex = 0;
-                    if (tabControl.SelectedTab == tabControl.TabPages[0] && clbDetail.Items.Count == 0)
-                        tabControl.SelectedTab = tabControl.TabPages[1]; // goto text edit mode
-                    tabControl.Focus();
-                }
-                else if (e.KeyData == Keys.Up || e.KeyData == Keys.Down)
+                if (e.KeyData == Keys.Up || e.KeyData == Keys.Down)
                     IsScrolling = true; // don't fetch data if the user is scrolling fast
+                else if (e.KeyCode == Keys.Enter)
+                {
+                    e.Handled = true;
+
+                    // move to next control
+                    if (e.Shift)
+                    {
+                        tabControl.SelectedTab = tabControl.TabPages[2];
+                        tabControl.Focus();
+                    }
+                    else
+                    {
+                        if (clbDetail.Items.Count != 0) clbDetail.SelectedIndex = 0;
+                        if (tabControl.SelectedTab == tabControl.TabPages[0] && clbDetail.Items.Count == 0)
+                            tabControl.SelectedTab = tabControl.TabPages[1]; // goto text edit mode
+                        tabControl.Focus();
+                    }
+                }
                 else if (e.KeyData == Keys.Escape)
                     txbFilter.Focus();
-                else if (e.KeyData == (Keys.Control | Keys.E))
-                {
-                    //start text edit mode
-                    tabControl.SelectedTab = tabControl.TabPages[1];
-                    tabControl.Focus();
-                }
-                else if (e.KeyData == Keys.Delete)
-                {
-                    DeletePiece();
-                }
                 else if (e.KeyData == (Keys.Home))
                 {
                     dg.ClearSelection();
@@ -188,6 +188,21 @@ namespace MusicLib
                     dg.ClearSelection();
                     dg.Rows[dg.CurrentRow.Index].Selected = true;
                 }
+                else if (e.KeyData == (Keys.Alt | Keys.P))
+                {
+                    tabControl.SelectedTab = tabControl.TabPages[2];
+                    tabControl.Focus();
+                }
+                else if (e.KeyData == (Keys.Control | Keys.E))
+                {
+                    //start text edit mode
+                    tabControl.SelectedTab = tabControl.TabPages[1];
+                    tabControl.Focus();
+                }
+                else if (e.KeyData == Keys.Delete)
+                {
+                    DeletePiece();
+                }            
             };
             dg.SelectionChanged += (sender, e) => { if (!IsScrolling) UpdateDetail(); };
             dg.GotFocus += (sender, e) =>
@@ -199,7 +214,10 @@ namespace MusicLib
             {
                 dg.CurrentCell = dg[e.ColumnIndex, e.RowIndex];
                 if (dg[0, e.RowIndex].Value == null && dg.CurrentCell.Value != null)
-                    AddNewPiece(dg.CurrentCell.Value.ToString());
+                {
+                    if (!AddNewPiece(dg.CurrentCell.Value.ToString()))
+                        dg.Rows.Remove(dg.Rows[dg.CurrentCell.RowIndex]);
+                }
                 else if (!dg.CurrentRow.IsNewRow)
                     RenamePiece(dg.CurrentCell.Value.ToString());
             };
@@ -260,16 +278,6 @@ namespace MusicLib
                 if (e.KeyData == (Keys.Shift | Keys.Enter))
                     ChangeDetail(txbEdit.Lines); // submit changes but not leaving edit mode
             };
-            //txbEdit.LostFocus += (sender, e) =>
-            //{
-            //    if (txbEdit.Text.Trim() == "" || currentPiece.Details == txbEdit.Lines) return;
-            //    change_status("aa");
-            //    //if (MessageBox.Show("Your changes have not been saved; are you sure you want to leave and discard the changes?",
-            //    //    "Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) == DialogResult.No)
-            //    //    txbEdit.Focus();
-            //    //else
-            //    //    txbEdit.Lines = currentPiece.Details;
-            //};
 
             txbEdit.PreviewKeyDown += (sender, e) =>
             {
@@ -277,6 +285,18 @@ namespace MusicLib
                     e.IsInputKey = false; //shift+enter and ctrl+enter is used for special purposes, not input...
             };
             //txbEdit.GotFocus += (sender,e) => txbEdit.Lines = currentPiece.Details;
+
+            pgrid.PropertyValueChanged += (sender, e) =>
+            {
+                change_status((e.OldValue != null ? e.OldValue.ToString() : "") + " => " + e.ChangedItem.Value.ToString());
+                Array.ForEach<object>(pgrid.SelectedObjects, p => ((Piece)p).Commit());
+                change_status("Properties updated");
+            };
+            ((ContainerControl)pgrid).Controls[2].PreviewKeyDown += (sender, e) =>
+            {
+                if (e.KeyData == Keys.Escape)
+                    dg.Focus();
+            };
         }
 
         
@@ -286,16 +306,14 @@ namespace MusicLib
         /// </summary>
         public void Initialize()
         {
-            Database.Open("music.db3");
-
-            artistSearch = new ArtistSearch(ArtistSearch.Fields.ID, ArtistSearch.Fields.FullName);
+            artistSearch = new ArtistSearch(ArtistSearch.Fields.ID, ArtistSearch.Fields.FullName,
+                                            ArtistSearch.Fields.MatchName);
             artistSearch.AddTypeToSearch(ArtistSearch.TypeCategory.Composers);
 
             genreSearch = new GenreSearch(GenreSearch.Fields.ID, GenreSearch.Fields.Name);
 
             pieceSearch = new PieceSearch(PieceSearch.Fields.ID, PieceSearch.Fields.Name,
                 PieceSearch.Fields.ParentPieceID);
-
 
             SupressUpdate = false;
 
@@ -445,7 +463,7 @@ namespace MusicLib
 
         }
 
-        private void AddNewPiece(string name)
+        private bool AddNewPiece(string name)
         {
             //if (SupressUpdate) return;
 
@@ -464,7 +482,7 @@ namespace MusicLib
                 {
                     MessageBox.Show("Please choose a composer before adding a new piece");
                     UpdatePieceList(false);
-                    return;
+                    return false;
                 }
 
                 if (txbGenre.SelectedValue == null)
@@ -472,7 +490,7 @@ namespace MusicLib
                     //TODO: show a dialog box here instead of aborting.
                     MessageBox.Show("Please choose a genre before adding a new piece");
                     UpdatePieceList(false);
-                    return;
+                    return false;
                 }
 
                 Piece p = new Piece
@@ -486,6 +504,7 @@ namespace MusicLib
 
                 dg[0, dg.CurrentCell.RowIndex].Value = p.ID;
 
+                return true;
             }
             finally
             {
@@ -524,20 +543,34 @@ namespace MusicLib
                     return;
 
                 Piece p;
+                bool allsuccessful = true;
                 foreach (DataGridViewRow r in dg.SelectedRows)
                 {
                     p = new Piece(int.Parse(r.Cells[0].Value.ToString()));
-                    p.Delete();
-                    dg.Rows.Remove(r);
+                    try
+                    {
+                        p.Delete();
+                        dg.Rows.Remove(r);
+                    }
+                    catch (SqliteClient.SQLiteException e)
+                    {
+                        if (e.Message.Contains("violates foreign key constraint"))
+                            allsuccessful = false;
+                        else
+                            throw;
+                    }
                 }
                 //dg.ClearSelection();
                 //dg.Rows.Remove(dg.Rows[dg.CurrentCell.RowIndex]);
                 //dg.CurrentCell = dg[1, (dg.CurrentCell.RowIndex == dg.Rows.Count) ?
                 //                        dg.CurrentCell.RowIndex - 1 : dg.CurrentCell.RowIndex + 1];
+                if (!allsuccessful)
+                    MessageBox.Show("Some pieces cannot be delete as they are being referenced "
+                                    + "by other records in database; \nmaybe you want to rename the piece instead?");
 
                 SupressUpdate = false;
+                dg.ClearSelection();
                 dg.CurrentCell.Selected = true;
-                UpdatePieceList(true);
             }
             finally
             {
@@ -548,6 +581,15 @@ namespace MusicLib
         private void UpdateDetail()
         {
             if (SupressUpdate) return;
+
+            List<Piece> lp = new List<Piece>();
+            foreach (DataGridViewRow r in dg.SelectedRows)
+            {
+                if (!r.IsNewRow)   
+                    lp.Add(new Piece(int.Parse(dg[0, r.Index].Value.ToString())));
+            }
+            pgrid.SelectedObjects = lp.ToArray();
+
 
             clbDetail.Items.Clear();
             txbEdit.Clear();
@@ -560,6 +602,7 @@ namespace MusicLib
 
             if (!DetailPaneVisible) return; // no need to update UI
 
+            
             if (currentPiece.Details != null)
             {
                 clbDetail.Items.AddRange(currentPiece.Details);
@@ -584,12 +627,13 @@ namespace MusicLib
                 SupressUpdate = true;
                 this.Cursor = Cursors.WaitCursor;
                 change_status("Updating pieces list...", false);
-                Application.DoEvents();
 
                 pieceSearch.ClearFilters();
                 string current_value = "";
+                if (dg.SelectedRows.Count == 1) dg.CurrentCell = dg[1, dg.SelectedRows[0].Index];
                 if (TryKeepOldSelection && dg != null && dg.CurrentCell != null && !dg.CurrentRow.IsNewRow)
                     current_value = dg[1, dg.CurrentRow.Index].Value.ToString();
+                Application.DoEvents();
 
                 SupressUpdate = false;
                 dg.ClearSelection();
@@ -607,7 +651,7 @@ namespace MusicLib
                 else if (txbGenre.Text != TextBoxDefaultAll) return;
 
                 if (txbFilter.Text != TextBoxDefaultNone)
-                    pieceSearch.AddWordFilter(PieceSearch.Fields.Name, txbFilter.Text);
+                    pieceSearch.AddWordFilter(PieceSearch.Fields.MatchName, txbFilter.Text);
 
                 pieceSearch.PerformSearchToDataGridView(dg);
                 dg.Sort(dg.Columns[1], ListSortDirection.Ascending);
@@ -649,7 +693,7 @@ namespace MusicLib
 
             txbComposer.Items.Clear();
             txbComposer.Items.AddRange(artistSearch.PerformSearchToList(),
-                                       1,  //match FullName
+                                       2,  //match MatchName
                                        1,  //display FullName
                                        0  //value member is ID
                                        );

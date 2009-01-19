@@ -15,6 +15,9 @@ namespace MusicLib
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
+
+            libdb.Database.Open("music.db3");
+
             Application.Run(new BrowseMusic()); 
         }
     }
