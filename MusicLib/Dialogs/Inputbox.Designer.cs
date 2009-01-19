@@ -32,6 +32,7 @@
             this.txb = new CustomForm.AutoCompleteTextBox();
             this.btnOK = new System.Windows.Forms.Button();
             this.btnCancel = new System.Windows.Forms.Button();
+            this.cmb = new System.Windows.Forms.ComboBox();
             this.SuspendLayout();
             // 
             // label
@@ -56,6 +57,7 @@
             this.txb.PopupWidth = 300;
             this.txb.Size = new System.Drawing.Size(248, 20);
             this.txb.TabIndex = 1;
+            this.txb.Visible = false;
             // 
             // btnOK
             // 
@@ -80,6 +82,16 @@
             this.btnCancel.UseVisualStyleBackColor = true;
             this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
             // 
+            // cmb
+            // 
+            this.cmb.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmb.FormattingEnabled = true;
+            this.cmb.Location = new System.Drawing.Point(15, 28);
+            this.cmb.Name = "cmb";
+            this.cmb.Size = new System.Drawing.Size(249, 21);
+            this.cmb.TabIndex = 4;
+            this.cmb.Visible = false;
+            // 
             // Inputbox
             // 
             this.AcceptButton = this.btnOK;
@@ -89,10 +101,14 @@
             this.ClientSize = new System.Drawing.Size(276, 88);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnOK);
-            this.Controls.Add(this.txb);
             this.Controls.Add(this.label);
+            this.Controls.Add(this.cmb);
+            this.Controls.Add(this.txb);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.Name = "Inputbox";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -104,5 +120,6 @@
         private CustomForm.AutoCompleteTextBox txb;
         private System.Windows.Forms.Button btnOK;
         private System.Windows.Forms.Button btnCancel;
+        private System.Windows.Forms.ComboBox cmb;
     }
 }

@@ -35,10 +35,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\CueSharp\bin\Release\CueSharp.dll</HintPath>
     </Reference>
-    <Reference Include="SqliteClient, Version=2.0.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\SqliteClient\SQLiteClient\bin\Debug\SqliteClient.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -84,6 +80,12 @@
     <Content Include="sqlite3.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SQLiteClient\SQLiteClient.csproj">
+      <Project>{083E6420-B582-436A-BC9D-CE6749477987}</Project>
+      <Name>SQLiteClient</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

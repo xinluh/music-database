@@ -32,10 +32,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="SqliteClient, Version=2.0.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\SqliteClient\SQLiteClient\bin\Debug\SqliteClient.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -101,13 +97,17 @@
     <Compile Include="Utils.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Femiani.Forms.UI\CustomForm.csproj">
+    <ProjectReference Include="..\Femiani.Forms.UI\AutoCompleteTextBox.csproj">
       <Project>{77FB2ED1-B6BE-4425-8B29-51E8565E84EC}</Project>
-      <Name>CustomForm</Name>
+      <Name>AutoCompleteTextBox</Name>
     </ProjectReference>
     <ProjectReference Include="..\libdb\libdb.csproj">
       <Project>{7451A450-CABA-4BA5-B4B4-7882C9BD88FE}</Project>
       <Name>libdb</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SQLiteClient\SQLiteClient.csproj">
+      <Project>{083E6420-B582-436A-BC9D-CE6749477987}</Project>
+      <Name>SQLiteClient</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
