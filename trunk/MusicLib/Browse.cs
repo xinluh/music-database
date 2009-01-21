@@ -115,6 +115,7 @@ namespace MusicLib
                 if (e.KeyData == Keys.Down)
                     dg.Focus();
             };
+            txbFilter.Enter += (sender, e) => txbFilter.SelectAll();
 
             dg.Rows.Clear();
             dg.CellFormatting += (sender, e) =>
@@ -191,7 +192,12 @@ namespace MusicLib
                 else if (e.KeyData == (Keys.Alt | Keys.P))
                 {
                     tabControl.SelectedTab = tabControl.TabPages[2];
-                    tabControl.Focus();
+                    dg.Focus();
+                }
+                else if (e.KeyData == (Keys.Alt | Keys.M))
+                {
+                    tabControl.SelectedTab = tabControl.TabPages[0];
+                    dg.Focus();
                 }
                 else if (e.KeyData == (Keys.Control | Keys.E))
                 {
@@ -478,6 +484,8 @@ namespace MusicLib
                 //    dg.CurrentCell.Value = name;
                 //}
 
+                string genre;
+
                 if (txbComposer.SelectedValue == null)
                 {
                     MessageBox.Show("Please choose a composer before adding a new piece");
@@ -486,18 +494,15 @@ namespace MusicLib
                 }
 
                 if (txbGenre.SelectedValue == null)
-                {
-                    //TODO: show a dialog box here instead of aborting.
-                    MessageBox.Show("Please choose a genre before adding a new piece");
-                    UpdatePieceList(false);
-                    return false;
-                }
+                    genre = Dialogs.Inputbox.GetGenre("");
+                else
+                    genre = txbGenre.Text;
 
                 Piece p = new Piece
                 {
                     Name = name,
                     Composer = new Artist(int.Parse(txbComposer.SelectedValue.ToString())),
-                    Genre = txbGenre.Text
+                    Genre = genre
                 };
 
                 p.Insert();

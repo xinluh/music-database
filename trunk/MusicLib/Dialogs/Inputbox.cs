@@ -36,6 +36,19 @@ namespace MusicLib.Dialogs
             }
         }
 
+        public static string GetGenre(string defaultGenre)
+        {
+            GenreSearch s = new GenreSearch(GenreSearch.Fields.Name);
+
+            Inputbox ib = new Inputbox("Choose a genre: ", s.PerformSearchToScalar().ToArray(),
+                defaultGenre, false);
+
+            if (ib.ShowDialog() == DialogResult.Cancel)
+                return null;
+            else
+                return ib.SelectedItem.ToString();
+        }
+
         public Inputbox()
         {
             InitializeComponent();
