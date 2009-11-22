@@ -18,7 +18,9 @@ namespace MusicLib
 
             libdb.Database.Open("music.db3");
 
-            Application.Run(new BrowseMusic()); 
+            //Application.Run(new BrowseMusic());
+            Application.Run(new AddAlbum());
+            //Application.Run(new SelectMultipleArtists());
         }
     }
 }

@@ -46,6 +46,7 @@
             // 
             // txb
             // 
+            this.txb.DefaultText = "";
             this.txb.Location = new System.Drawing.Point(15, 28);
             this.txb.MatchDisplayString = true;
             this.txb.MatchMode = CustomForm.AutoCompleteTextBox.MatchModes.Contains;
@@ -57,7 +58,6 @@
             this.txb.PopupWidth = 300;
             this.txb.Size = new System.Drawing.Size(248, 20);
             this.txb.TabIndex = 1;
-            this.txb.Visible = false;
             // 
             // btnOK
             // 

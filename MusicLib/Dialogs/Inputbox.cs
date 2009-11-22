@@ -12,6 +12,7 @@ namespace MusicLib.Dialogs
 {
     public partial class Inputbox : Form
     {
+        private InputModes inputMode;
         public enum InputModes
         {
             Text,
@@ -31,7 +32,7 @@ namespace MusicLib.Dialogs
                 return null;
             else
             {
-                Artist a = new Artist(ib.SelectedItem.ToString(), "composer", false);
+                Artist a = new Artist(ib.SelectedItem.ToString(), "composer");
                 return a;
             }
         }
@@ -85,11 +86,12 @@ namespace MusicLib.Dialogs
         
         public InputModes InputMode 
         { 
-            get { return txb.Visible? InputModes.Text : InputModes.Combo; }
+            get { return inputMode; }
             set
             {
                 txb.Visible = (value == InputModes.Text);
                 cmb.Visible = (value == InputModes.Combo);
+                inputMode = value;
             }
         }
 

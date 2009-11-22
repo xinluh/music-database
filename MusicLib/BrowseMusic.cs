@@ -14,8 +14,6 @@ namespace MusicLib
         public BrowseMusic()
         {
             InitializeComponent();
-            browse1.Initialize();
-
             browse1.StatusChanged += (sender, e) => { this.StatusLabel.Text = browse1.Status; };
 
 //            MessageBox.Show("Test");
