@@ -5,6 +5,9 @@ using System.Text;
 using System.Reflection;
 using libdb;
 using System.ComponentModel;
+using System.Xml;
+using System.Xml.Serialization;
+
 
 
 namespace libdb
@@ -117,7 +120,7 @@ namespace libdb
 
         public Artist Composer { get; set; }
 
-        [ReadOnly(true)]
+        [XmlIgnore]        
         public List<Piece> ParentPieces { get; private set; }
 
         public override void Update()
@@ -133,6 +136,12 @@ namespace libdb
             ParentPieces.ForEach(p => p.Commit());
             Composer.Commit();
             base.Insert();
+        }
+
+        public string FormatDetail(string detailstr)
+        {
+            return ((Connector == "<--") ?
+                        "" : Name + Connector) + detailstr;
         }
 
 		internal void ReadFromTag(Tag tag)

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Globalization;
 
 namespace libdb
 {
@@ -34,6 +35,38 @@ namespace libdb
             "there is no table relationship defined for the specified tables";
         //public const string EXCEPTION_ = "";
 
+    }
+
+    static public class PathUtils
+    {
+        // http://blogs.msdn.com/michkap/archive/2005/02/19/376617.aspx
+        static string RemoveDiacritics(string stIn)
+        {
+            string stFormD = stIn.Normalize(NormalizationForm.FormD);
+            StringBuilder sb = new StringBuilder();
+
+            for (int ich = 0; ich < stFormD.Length; ich++)
+            {
+                UnicodeCategory uc = CharUnicodeInfo.GetUnicodeCategory(stFormD[ich]);
+                if (uc != UnicodeCategory.NonSpacingMark)
+                {
+                    sb.Append(stFormD[ich]);
+                }
+            }
+
+            return (sb.ToString().Normalize(NormalizationForm.FormC));
+        }
+
+        public static string FixPathString(string path)
+        {
+            string[] invalidchar = {"/", ": ", ":", "*", "?", "\"", "<", ">", "|"};
+            string[] replacement = {"-", " - ", "-", "", "", "'", "-", "-", "-"};
+
+            for (int i = 0; i < invalidchar.Length; i++)
+                path = path.Replace(invalidchar[i], replacement[i]);
+
+            return RemoveDiacritics(path);
+        }
     }
 
     public class NaturalSortComparer: IComparer<string>

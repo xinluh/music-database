@@ -22,6 +22,8 @@ namespace libdb
             [Des("alternate_first")]    AlternateFirstName   ,
             [Des("coalesce(fullname || '|' || alternate_last || alternate_first, fullname || '|' || alternate_last, fullname)")]
                                         MatchName            ,
+            [Des("fullname || ' (' || type || ')'")]
+                                        FullNameType         ,
         }
 
         public enum TypeCategory
@@ -36,6 +38,7 @@ namespace libdb
         protected override string table { get { return "vwArtist"; } }
         protected override string orderby { get { return ""; } }
 
+        public ArtistSearch() { }
         public ArtistSearch(params Fields[] fields)
         {
             SetFieldToSearch(fields);
@@ -126,7 +129,7 @@ public class PieceSearch : SearchBase
 
     }
 
-public class GenreSearch : SearchBase
+    public class GenreSearch : SearchBase
     {
         public enum Fields
         {
@@ -169,5 +172,95 @@ public class GenreSearch : SearchBase
 
 
 
-}
+    }
+
+    public class LabelSearch : SearchBase
+    {
+        private enum Fields
+        {
+            [Des("name")]
+            Name,
+
+        }
+        protected override string table { get { return "tblLabel"; } }
+        protected override string orderby { get { return ""; } }
+
+        public LabelSearch()
+        {
+            singleSearchField = Fields.Name;
+            SetFieldToSearch();
+        }
+
+        //private void SetFieldToSearch(Fields[] fields) { set_field_to_search(fields.Cast<object>()); }
+
+        /// <summary>
+        /// Add a filter to search. Filter string can be like " = 1", then the column/field name is automatically
+        /// inserted in the front; or it can also be a string.format string, like "{0} = 1 or {0} = 15", then
+        /// string.format will be called to replace all the "{0}" with the column/field name.
+        /// </summary>
+        /// <param name="f"></param>
+        /// <param name="filterstring"></param>
+        public void AddFilter(string filterstring) { add_filter(Fields.Name, filterstring); }
+
+        /// <summary>
+        /// Search a text field for all of the words (i.e. space-separated) in the "phrases" parameter.
+        /// </summary>
+        /// <param name="f"></param>
+        /// <param name="phrases"></param>
+        public void AddWordFilter(string phrases) { add_words_filter(Fields.Name, phrases); }
+
+        ///// <summary>
+        ///// Clear all filter associated with a field/column
+        ///// </summary>
+        ///// <param name="f"></param>
+        //public void ClearFilters() { filters.Remove(Fields.Name); }
+
+
+
+    }
+
+    public class ArtistTypeSearch : SearchBase
+    {
+        private enum Fields
+        {
+            [Des("name")]
+            Name,
+
+        }
+        protected override string table { get { return "tblArtistType"; } }
+        protected override string orderby { get { return ""; } }
+
+        public ArtistTypeSearch()
+        {
+            singleSearchField = Fields.Name;
+            SetFieldToSearch();
+        }
+
+        //private void SetFieldToSearch(Fields[] fields) { set_field_to_search(fields.Cast<object>()); }
+
+        /// <summary>
+        /// Add a filter to search. Filter string can be like " = 1", then the column/field name is automatically
+        /// inserted in the front; or it can also be a string.format string, like "{0} = 1 or {0} = 15", then
+        /// string.format will be called to replace all the "{0}" with the column/field name.
+        /// </summary>
+        /// <param name="f"></param>
+        /// <param name="filterstring"></param>
+        public void AddFilter(string filterstring) { add_filter(Fields.Name, filterstring); }
+
+        /// <summary>
+        /// Search a text field for all of the words (i.e. space-separated) in the "phrases" parameter.
+        /// </summary>
+        /// <param name="f"></param>
+        /// <param name="phrases"></param>
+        public void AddWordFilter(string phrases) { add_words_filter(Fields.Name, phrases); }
+
+        ///// <summary>
+        ///// Clear all filter associated with a field/column
+        ///// </summary>
+        ///// <param name="f"></param>
+        //public void ClearFilters() { filters.Remove(Fields.Name); }
+
+
+
+    }
 }

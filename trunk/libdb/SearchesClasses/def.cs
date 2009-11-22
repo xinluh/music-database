@@ -34,8 +34,17 @@ namespace libdb
         protected SearchBase()
         {
             SelectUnique = true;
+            singleSearchField = null;
         }
-        
+
+        protected object singleSearchField { get; set; }
+
+        /// <summary>
+        /// If is simple, this search only searches on a single field, thus
+        /// there is no need to set the fields to search.
+        /// </summary>
+        public bool IsSimple { get { return singleSearchField != null; } }
+
         public bool SelectUnique { get; set; }
         
         /// <summary>
@@ -88,21 +97,31 @@ namespace libdb
                 false)[0]).DescriptionStrings;
         }
 
+        public void SetFieldToSearch(params object[] Fields)
+        {
+            if (Fields.Length == 0 && IsSimple)
+                SetFieldToSearch(singleSearchField);
+            else
+                set_field_to_search(Fields.Cast<object>());
+        }
+
         protected void set_field_to_search(IEnumerable<object> fields)
         {
             this.fields = fields;
-            StringBuilder s = new StringBuilder();
+            this.columns = string.Join(",", fields.Select(x => 
+                enum_to_des((Enum)x)[0]).ToArray<string>());
+            //StringBuilder s = new StringBuilder();
             
-            foreach (object f in fields)
-            {
-                s.Append(enum_to_des((Enum) f)[0] + ",");
-            }
-            if (s.Length > 0)
-            {
-                s.Remove(s.Length - 1, 1); //removing the ending "," 
-            }
+            //foreach (object f in fields)
+            //{
+            //    s.Append(enum_to_des((Enum) f)[0] + ",");
+            //}
+            //if (s.Length > 0)
+            //{
+            //    s.Remove(s.Length - 1, 1); //removing the ending "," 
+            //}
 
-            this.columns = s.ToString();
+            //this.columns = s.ToString();
         }
 
         protected void add_filter(Enum value, string filterstring)

@@ -2,10 +2,14 @@
 using System.Collections.Generic;
 using System.Collections;
 using System.Text;
+using System.Linq;
 using System.Reflection;
 using HundredMilesSoftware.UltraID3Lib;
 using System.IO;
 using libdb;
+using System.Xml;
+using System.Xml.Serialization;
+
 
 
 namespace libdb
@@ -37,6 +41,11 @@ namespace libdb
             else    
                 this.album = album;
         }
+        public Track(int piece_id, string name) : this()
+        {
+            Piece = new Piece(piece_id);
+            Name = name;
+        }
 
         [AutoUpdateProp("name",data_type.text,false)]
         public string Name { get; set; }
@@ -53,6 +62,9 @@ namespace libdb
         [AutoUpdateProp("length",data_type.number,false)]
         public int Length { get; set; }
 
+        /// <summary>
+        /// File size in bytes.
+        /// </summary>
         [AutoUpdateProp("size",data_type.number,false)]
         public int Size { get; set; }
 
@@ -66,7 +78,8 @@ namespace libdb
         public bool NeedUpdate { get; set; }
 
         [AutoUpdateProp("album_id", data_type.number, false)]
-        private int album_id { get; set; }
+        private int album_id 
+        { get; set; }
 
         [AutoUpdateProp("piece_id", data_type.number, false)]
         private int piece_id
@@ -95,12 +108,12 @@ namespace libdb
             }
         }
         
+        [XmlIgnore]        
         public Album Album { 
             get {return album;}
             set {
                 if (value == null) throw new NullReferenceException();
                 this.album = value;
-                this.album_id = (this.Album == null) ? 0 : this.Album.ID;
             }
         }
         public Piece Piece
@@ -115,35 +128,54 @@ namespace libdb
             }
         }
         public List<Artist> Performers { get; set; }
+        internal Tag tag { get; set; }
+        public string FullPath { get { return Path.Combine(Album.Location, Path.GetFileName(FileName)); } }
 
-
-
-
-
-
-        public void ReadFromFile(string filename)
+        public override void Insert()
+        {
+            if (album.ID == 0 || piece_id == 0)
+                throw new System.Exception("Cannot insert track when there is no " + 
+                    "valid album or piece associated with it");
+            album_id = album.ID;
+            base.Insert();
+        }
+        public override void Update()
+        {
+            if (album.ID == 0 || piece_id == 0)
+                throw new System.Exception("Cannot update track when there is no " +
+                    "valid album or piece associated with it");
+            album_id = album.ID;
+            base.Update();
+        }
+        public void InsertOrUpdate()
+        {
+            if (ID == 0) Insert();
+            else Update();
+        }
+        public Track ReadFromFile(string filename)
         {
             FileInfo finfo = new FileInfo(filename);
-            ReadFromFile(finfo);
+            return ReadFromFile(finfo);
+            
         }
 
-        public void ReadFromFile(FileInfo finfo)
+        public Track ReadFromFile(FileInfo finfo)
         {
             if (finfo == null || !finfo.Exists ) 
             {
                 this.FileName = "?";
                 this.Size = 0;
                 this.Length = 0;
-				return;
+				return this;
             }
 			
 			// TODO: Check whether is valid mp3 file
 
-			Tag tag = new Tag(finfo.FullName);
+			tag = new Tag(finfo.FullName);
 
-            Size = (int) finfo.Length;
+            Size = (int) finfo.Length / 1024;
 			Length = (int) System.Math.Round(tag.UltraID3.Duration.TotalSeconds, 0);
-			FileName = finfo.FullName;
+            FileName = finfo.Name;
 			ID = tag.TrackID ?? 0;
 			TrackNumber = tag.TrackNum ?? 0;
 			Year = tag.Year ?? 0;
@@ -152,26 +184,33 @@ namespace libdb
             //TODO: Performers = ???
 
             if (Piece == null) Piece = new Piece();
-            if (Album == null) Album = new Album();
+            //if (Album == null) Album = new Album();
 
             //Piece.ReadFromTag(tag);
             //Album.ReadFromTag(tag);
+
+            return this;
         }
 
-        public void WriteToFile()
+        public void CheckValidness()
         {
-            if (string.IsNullOrEmpty(FileName) || !File.Exists(FileName))
-                return;
-
+            if (string.IsNullOrEmpty(FileName) || !File.Exists(FullPath))
+                throw new ArgumentException("The file specified in FileName is nonexistent; cannot write to file!");
             if (Album == null)
                 throw new NullReferenceException("This track's parent album is null; cannot write to file!");
-
             if (Piece == null)
                 throw new NullReferenceException("This track's piece infomation is null; cannot write to file!");
+            if (ID == 0)
+                throw new ArgumentException("Track must be committed to database first; cannot write to file!");
 
             // TODO: Check whether is valid mp3 file
+        }
+        public void WriteTag()
+        {
+            CheckValidness();            
 
-            Tag tag = new Tag(FileName);
+            if (tag == null)
+                tag = new Tag(FullPath);
             tag.Clear();
 
             tag.Year = Year; 
@@ -179,10 +218,8 @@ namespace libdb
             tag.SetDiscNum(DiscNumber, Album.TotalDisc);
             tag.TrackID = ID;
             tag.Title = Name;
-
-            List<string> s = new List<string>();
-            Performers.ForEach((a) => s.Add(a.GetName(Artist.NameFormats.Last_First_Type)));
-            tag.Performers = s.ToArray();
+            tag.Performers = Performers.ConvertAll<string>(
+                x => x.GetName(Artist.NameFormats.First_Last_Type)).ToArray(); ;
 
             Piece.WriteToTag(tag);
             Album.WriteToTag(tag);
@@ -190,9 +227,27 @@ namespace libdb
             tag.Write();
 
             //update the file size after adding/changing tag
-            FileInfo f = new FileInfo(FileName);
+            FileInfo f = new FileInfo(FullPath);
             Size = (int)f.Length;
             Length = (int)System.Math.Round(tag.UltraID3.Duration.TotalSeconds, 0);
+            Update();
+        }
+        public void RenameFile()
+        {
+            CheckValidness();
+
+            string new_name = (Album.TotalDisc > 1 ? Album.TotalDisc + "-" : "")
+                + TrackNumber.ToString().PadLeft(2, '0') + " "
+                + PathUtils.FixPathString(this.Name) 
+                + "." + Path.GetExtension(FullPath);
+
+            // make sure the name is not too long
+            if (new_name.Length > 180)
+                new_name = new_name.Substring(0, 180);
+
+            File.Move(FullPath, Path.Combine(Album.Location,new_name));
+
+            FileName = new_name;
             Update();
         }
     }

@@ -160,15 +160,19 @@ namespace libdb
                 return;
             if (this.ID == 0)
                 throw new Exception("The record does not exist in database; try Insert() instead of Update()");
-            if (this.IsEquivalent(old_values)) //nothing changed; no update needed
+
+            ArrayList oldv = old_values.get_values_for_db();
+            ArrayList newv = get_values_for_db();
+
+            if (IsEquivalent(oldv,newv)) //nothing changed; no update needed
                 return;
 
-            string sql = make_update_sql();
+            string sql = make_update_sql(newv);
             if (string.IsNullOrEmpty(sql)) return;
             
             Database.ExecuteNonQuery(sql);
 
-            Database.WriteLog(sql, old_values.make_update_sql());
+            Database.WriteLog(sql, old_values.make_update_sql(oldv));
             old_values = Clone();
         }
         public virtual void Delete()
@@ -200,28 +204,47 @@ namespace libdb
             o.Fill(this.ID, false);
             return o;
         }
-        
-        public virtual bool IsEquivalent(libobj obj)
+
+        protected virtual bool IsEquivalent(ArrayList oldv, ArrayList newv)
         {
-            PropertyInfo[] ps = db_structure.PropertiesToBeUpdated(this);
-            data_type[] datatypes = db_structure.GetDataTypes(this);
-            bool[] writable = db_structure.GetIsWritable(this);
+            if (oldv.Count != newv.Count) return false;
 
-            for (int i = 0; i < ps.Length; i++)
-            {
-                if (!writable[i]) continue; //Readonly field should not be changed
-
-                if (is_same(datatypes[i], ps[i].GetValue(this, null), ps[i].GetValue(this.old_values, null)))
-                    continue;
-                else
-                    return false;
-            }
+            for (int i = 0; i < oldv.Count; i++)
+                if (oldv[i].ToString() != newv[i].ToString()) return false;
 
             return true;
         }
+
+        public virtual bool IsEquivalent(libobj obj)
+        {
+            if (!db_structure.IsAutoupdate(this) ||
+                !db_structure.IsAutoupdate(obj))
+                return this == obj;
+
+            return IsEquivalent(this.get_values_for_db(),obj.get_values_for_db());
+            //PropertyInfo[] ps = db_structure.PropertiesToBeUpdated(this);
+            //data_type[] datatypes = db_structure.GetDataTypes(this);
+            //bool[] writable = db_structure.GetIsWritable(this);
+
+            //for (int i = 0; i < ps.Length; i++)
+            //{
+            //    if (!writable[i]) continue; //Readonly field should not be changed
+
+            //    if (is_same(datatypes[i], ps[i].GetValue(this, null), ps[i].GetValue(this.old_values, null)))
+            //        continue;
+            //    else
+            //        return false;
+            //}
+
+            //return true;
+        }
         private string make_update_sql()
         {
-            ArrayList values = get_values_for_db();
+            return make_update_sql(get_values_for_db());
+        }
+        private string make_update_sql(ArrayList values)
+        {
+            //ArrayList values = get_values_for_db();
 
             if (values == null || values.Count == 0)
                 return null; //nothing to update...
@@ -243,7 +266,11 @@ namespace libdb
         }
         private string make_insert_sql()
         {
-            ArrayList values = get_values_for_db();
+            return make_insert_sql(get_values_for_db());
+        }
+        private string make_insert_sql(ArrayList values)
+        {
+            //ArrayList values = get_values_for_db();
 
             if (values == null) return null;
 
@@ -293,8 +320,8 @@ namespace libdb
                     if (convert_to_db_datatype(datatypes[i], v, out outv) != 0)
                     {
                         //conversion fails
-                        Debug.HandleException(new Exception(string.Format(
-                            "Data type conversion from {1} failed", ps[i].PropertyType.ToString())));
+                        throw new Exception(string.Format(
+                            "Data type conversion from {1} failed", ps[i].PropertyType.ToString()));
                         break;
                     }
 
@@ -305,6 +332,7 @@ namespace libdb
             }
             catch (Exception e)
             {
+                throw e;
                 Debug.HandleException(e);
                 return null;
             }
@@ -384,6 +412,7 @@ namespace libdb
                     }
                     catch (Exception e)
                     {
+                        throw e;
                         Debug.HandleException(new Exception(string.Format(
                             "Cannot convert {0} from string to number",
                             original_value.ToString()), e));
@@ -441,11 +470,14 @@ namespace libdb
                 case data_type.number:
                     try
                     {
+                        if (original_value.ToString() == "")
+                            return 0;
                         out_value = Convert.ToInt32(original_value.ToString());
                         return 0;
                     }
                     catch (Exception e)
                     {
+                        throw e; 
                         Debug.HandleException(new Exception(string.Format(
                             "Cannot convert {0} from string to number",
                             original_value.ToString()), e));
