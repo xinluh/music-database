@@ -197,7 +197,7 @@ namespace SqliteClient
 		/// </summary>
 		/// <remarks>
 		/// The column index is zero based. A quicker way of getting a
-		/// single column of data is the <see cref="SQLiteClient.GetColumn">
+		/// single column of data is the <see cref="SQLiteClient.GetColumn(string,int)">
 		/// GetColumn</see> method. Returns an empty ArrayList if the column
 		/// index is not valid.
 		/// </remarks>
