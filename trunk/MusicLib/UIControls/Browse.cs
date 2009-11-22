@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
@@ -19,6 +20,7 @@ namespace MusicLib
         const string TextBoxDefaultNone = "(None)";
         private readonly Color CellInEditColor = Color.Azure;
         public event EventHandler StatusChanged;
+        public event EventHandler SelectionChanged;
 
         ArtistSearch artistSearch;
         PieceSearch pieceSearch;
@@ -36,6 +38,7 @@ namespace MusicLib
             set { splitContainer1.Panel2Collapsed = !value; }
         }
 
+
         public Browse()
         {
             InitializeComponent();
@@ -48,13 +51,33 @@ namespace MusicLib
                 status_reset_timer.Enabled = false;
             };
 
+            if (System.ComponentModel.LicenseManager.UsageMode ==
+                System.ComponentModel.LicenseUsageMode.Runtime)
+            {
+                artistSearch = new ArtistSearch(ArtistSearch.Fields.ID,
+                                            ArtistSearch.Fields.FullName,
+                                            ArtistSearch.Fields.MatchName);
+                artistSearch.AddTypeToSearch(ArtistSearch.TypeCategory.Composers);
+
+                genreSearch = new GenreSearch(GenreSearch.Fields.ID, GenreSearch.Fields.Name);
+
+                pieceSearch = new PieceSearch(PieceSearch.Fields.ID, PieceSearch.Fields.Name,
+                    PieceSearch.Fields.ParentPieceID);
+
+                SupressUpdate = false;
+
+                UpdateArtistList();
+                UpdateGenreList();
+                UpdatePieceList(false);
+            }
+
             txbComposer.Focus();
 
             // hide the tabs of tabControlMode
             Rectangle rect = new Rectangle(tabPageSearch.Left, tabPageSearch.Top, tabPageSearch.Width, tabPageSearch.Height);
             tabControlMode.Region = new Region(rect);
 
-            txbComposer.Text = TextBoxDefaultAll;
+            txbComposer.SetDefaultText(TextBoxDefaultAll);
             txbComposer.PopupWidth = -1;
             txbComposer.ItemSelected += (sender, e) =>
             {
@@ -67,7 +90,7 @@ namespace MusicLib
             txbComposer.TextChanged += (sender, e) =>
             {
                 SupressUpdate = true;
-                txbGenre.Text = TextBoxDefaultAll;
+                txbGenre.ResetText();
                 txbFilter.Text = TextBoxDefaultNone;
                 SupressUpdate = false;
             };
@@ -75,7 +98,7 @@ namespace MusicLib
             {
                 if (e.KeyData == Keys.Enter)
                 {
-                    if (txbComposer.SelectedItem != null || txbComposer.Text == TextBoxDefaultAll)
+                    if (txbComposer.SelectedItem != null || !txbComposer.HasText())
                         txbFilter.Focus();
                     else
                     {
@@ -100,11 +123,11 @@ namespace MusicLib
 
                 e.Handled = true;
             };
-            txbComposer.LostFocus += new EventHandler(txb_LostFocus);
+            //txbComposer.LostFocus += new EventHandler(txb_LostFocus);
 
-            txbGenre.Text = TextBoxDefaultAll;
+            txbGenre.SetDefaultText(TextBoxDefaultAll);
             txbGenre.PopupWidth = -1;
-            txbGenre.LostFocus += txb_LostFocus;
+            //txbGenre.LostFocus += txb_LostFocus;
             txbGenre.ItemSelected += (sender, e) => UpdatePieceList(false);
 
             txbFilter.Text = TextBoxDefaultNone;
@@ -236,9 +259,7 @@ namespace MusicLib
                 if (!DetailPaneVisible) return; // no need to update UI
                 if (clbDetail.SelectedIndex != -1 && currentPiece != null)
                 {
-                    change_status(((currentPiece.Connector == "<--") ?
-                        "" : currentPiece.Name + currentPiece.Connector)
-                        + clbDetail.SelectedItem.ToString());
+                    change_status(currentPiece.FormatDetail(clbDetail.SelectedItem.ToString()));
                 }
             };
 
@@ -305,27 +326,27 @@ namespace MusicLib
             };
         }
 
-        
-        
-        /// <summary>
-        /// Must call before using; handles important procedures such as connecting to DB.
-        /// </summary>
-        public void Initialize()
+
+        public List<Track> GetSelectedAsTracks()
         {
-            artistSearch = new ArtistSearch(ArtistSearch.Fields.ID, ArtistSearch.Fields.FullName,
-                                            ArtistSearch.Fields.MatchName);
-            artistSearch.AddTypeToSearch(ArtistSearch.TypeCategory.Composers);
+            List<Track> tracks = new List<Track>();
+            if (dg.SelectedRows.Count == 0) return tracks;
 
-            genreSearch = new GenreSearch(GenreSearch.Fields.ID, GenreSearch.Fields.Name);
+            if (dg.SelectedRows.Count == 1)
+            {
+                if (clbDetail.CheckedItems.Count == 0)
+                {
+                    tracks.Add(new Track(currentPiece.ID, currentPiece.Name));
+                    return tracks;
+                }
+                else
+                    return clbDetail.CheckedItems.Cast<object>().Select(x => 
+                        new Track(currentPiece.ID, currentPiece.FormatDetail(x.ToString()))).ToList<Track>();
+            }
+            else
+                return dg.SelectedRows.Cast<DataGridViewRow>().OrderBy(x=>x.Index).Select(x => 
+                    new Track(int.Parse(x.Cells["id"].Value.ToString()), x.Cells["PieceName"].Value.ToString())).ToList<Track>();
 
-            pieceSearch = new PieceSearch(PieceSearch.Fields.ID, PieceSearch.Fields.Name,
-                PieceSearch.Fields.ParentPieceID);
-
-            SupressUpdate = false;
-
-            UpdateArtistList();
-            UpdateGenreList();
-            UpdatePieceList(false);
         }
 
         /// <summary>
@@ -449,7 +470,7 @@ namespace MusicLib
                     "Confirmation", MessageBoxButtons.YesNo) != DialogResult.Yes)
                     return false;
 
-                Artist c = new Artist(txbComposer.Text, "composer", false);
+                Artist c = new Artist(txbComposer.Text, "composer");
                 if (c.ID != 0)
                     MessageBox.Show("The new composer you entered exists in the database as "
                     + c.GetName(Artist.NameFormats.Last_First_Type) + ".\n It is therefore not added to database");
@@ -648,12 +669,12 @@ namespace MusicLib
                 if (txbComposer.SelectedValue != null)
                     pieceSearch.AddFilter(PieceSearch.Fields.ComposerID, "= "
                                           + txbComposer.SelectedValue.ToString());
-                else if (txbComposer.Text != TextBoxDefaultAll) return;
+                else if (txbComposer.HasText()) return;
 
                 if (txbGenre.SelectedValue != null)
                     pieceSearch.AddFilter(PieceSearch.Fields.GenreID, "= "
                                           + txbGenre.SelectedValue.ToString());
-                else if (txbGenre.Text != TextBoxDefaultAll) return;
+                else if (txbGenre.HasText()) return;
 
                 if (txbFilter.Text != TextBoxDefaultNone)
                     pieceSearch.AddWordFilter(PieceSearch.Fields.MatchName, txbFilter.Text);
@@ -696,13 +717,13 @@ namespace MusicLib
         {
             if (SupressUpdate) return;
 
-            txbComposer.Items.Clear();
-            txbComposer.Items.AddRange(artistSearch.PerformSearchToList(),
-                                       2,  //match MatchName
-                                       1,  //display FullName
-                                       0  //value member is ID
-                                       );
-            txbComposer.ForceUpdateList();
+                txbComposer.Items.Clear();
+                txbComposer.Items.AddRange(artistSearch.PerformSearchToList(),
+                                           2,  //match MatchName
+                                           1,  //display FullName
+                                           0  //value member is ID
+                                           );
+                txbComposer.ForceUpdateList();
         }
 
         private void UpdateGenreList()
@@ -765,13 +786,13 @@ namespace MusicLib
             e.Handled = true;
         }
 
-        void txb_LostFocus(object sender, EventArgs e)
-        {
-            TextBox tb = ((TextBox)sender);
-            tb.SelectionStart = 0;
-            tb.ScrollToCaret();
-            if (tb.Text == "") tb.Text = TextBoxDefaultAll;
-        }
+        //void txb_LostFocus(object sender, EventArgs e)
+        //{
+        //    TextBox tb = ((TextBox)sender);
+        //    tb.SelectionStart = 0;
+        //    tb.ScrollToCaret();
+        //    if (tb.Text == "") tb.Text = TextBoxDefaultAll;
+        //}
 
         void clbDetail_KeyDown(object sender, KeyEventArgs e)
         {
@@ -801,6 +822,7 @@ namespace MusicLib
             e.Handled = true;
         }
 
+
         private void TrappedKeyDown(KeyEventArgs e)
         {
             if (e.KeyData == Keys.F6)
@@ -821,11 +843,11 @@ namespace MusicLib
                 else
                 {
                     Database.Close();
-                    Database.Open("../../../libdb/music.db3");
+                    Database.Open("../../../../libdb/music.db3");
                     UpdateArtistList();
                     UpdatePieceList(true);
                     this.BackColor = Color.Red;
-                    MessageBox.Show("DEBUG ONLY: now it is switched to the read database; be careful of making changes!",
+                    MessageBox.Show("DEBUG ONLY: now it is switched to the real database; be careful of making changes!",
                         "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 }
             }

@@ -150,6 +150,7 @@
             // 
             this.txbGenre.BackColor = System.Drawing.SystemColors.Control;
             this.txbGenre.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.txbGenre.DefaultText = "";
             this.txbGenre.Font = new System.Drawing.Font("Courier New", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txbGenre.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(192)))));
             this.txbGenre.Location = new System.Drawing.Point(61, 21);
@@ -178,6 +179,7 @@
             // 
             this.txbComposer.BackColor = System.Drawing.SystemColors.Control;
             this.txbComposer.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.txbComposer.DefaultText = "";
             this.txbComposer.Font = new System.Drawing.Font("Courier New", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txbComposer.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(192)))));
             this.txbComposer.Location = new System.Drawing.Point(61, 4);
