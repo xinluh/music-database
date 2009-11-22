@@ -45,8 +45,8 @@ namespace libdb
                     this._DBInfo = c.Comments;
             }
 
-            u.ID3v2Tag.WillWrite = true;
-            u.ID3v1Tag.WillWrite = false;
+            ////u.ID3v2Tag.WillWrite = true;
+            ////u.ID3v1Tag.WillWrite = false;
             u.ID3v2Tag.Frames.AddNewFrameTextEncodingType = TextEncodingTypes.Unicode;
         }
 
@@ -77,10 +77,10 @@ namespace libdb
             u.ID3v1Tag.Clear();
             u.ID3v2Tag.Clear();
             u.Clear();
-            u.ID3v2Tag.WillWrite = false;
-            u.ID3v1Tag.WillWrite = false;
+            //u.ID3v2Tag.WillWrite = false;
+            //u.ID3v1Tag.WillWrite = false;
             u.Write(); // okay dirty fix since the lib does not seem to actually Clear() the tag.
-            u.ID3v2Tag.WillWrite = true;
+            //u.ID3v2Tag.WillWrite = true;
         }
 
         public UltraID3 UltraID3

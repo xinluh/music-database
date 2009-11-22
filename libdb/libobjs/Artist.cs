@@ -133,9 +133,8 @@ namespace libdb
         /// <param name="name">See specification of property name for the valid formatting accepted</param>
         /// <param name="type">i.e. composer, pianist etc.</param>
         /// <param param name="autoInsertNewType">sets the property WillAutoInsertNewType</param>
-        public Artist(string name, string type, bool autoInsertNewType)
+        public Artist(string name, string type)
         {
-            WillAutoInsertNewType = autoInsertNewType;
             Type = type;
             this.name.Fill(name);
             ID = 0;
@@ -175,17 +174,15 @@ namespace libdb
         }
 
         /// <summary>
-        /// This is a write-only property; use GetName() to get the value.
+        /// Use GetName() to get the value in different formats.
         /// Accept string formatted either as "firstname middlenames lastname" or "lastname, firstname middlenames"
         /// if a string is given as double quoted, it will be treated as only lastname; i.e. "\"New York Philharmonic\"" 
         /// will NOT be treated as a person with lastname "Philharmonic"
         /// </summary>
         public string Name
         {
-            set
-            {
-                name.parse_name(value);
-            }
+            get { return GetName(NameFormats.Last_First); }
+            set { name.parse_name(value); }
         }
 
         public string GetName(NameFormats format)
@@ -203,9 +200,15 @@ namespace libdb
                 case NameFormats.Last_First:
                     return name.LastName + ((!string.IsNullOrEmpty(name.FirstName)) ? (", " + name.FirstName) : "");
                 case NameFormats.First_Last_Type:
-                    return GetName(NameFormats.First_Last) + ", " + type.Name;
+                    if (this.type_id == 3 || type_id ==4 || type_id == 5)
+                        return GetName(NameFormats.First_Last);
+                    else
+                        return GetName(NameFormats.First_Last) + ", " + type.Name;
                 case NameFormats.Last_First_Type:
-                    return GetName(NameFormats.Last_First) + " (" + type.Name + ")";
+                    if (this.type_id == 3 || type_id == 4 || type_id == 5)
+                        return GetName(NameFormats.Last_First);
+                    else
+                        return GetName(NameFormats.Last_First) + " (" + type.Name + ")";
                 default:
                     return "";
             }
@@ -217,17 +220,10 @@ namespace libdb
             set
             {
                 type.Fill(value);
-                if (type.ID == 0 && WillAutoInsertNewType)
+                if (type.ID == 0)
                     type.Insert();
             }
         }
-
-        /// <summary>
-        /// Governs the behavior when a new artist type is set but is not found in database. 
-        /// If true, the type given is automatically inserted into database; 
-        /// if false, new type will be inserted when this artist is inserted.
-        /// </summary>
-        public bool WillAutoInsertNewType { get; set; }
 
         public static bool TypeExists(string t)
         {
