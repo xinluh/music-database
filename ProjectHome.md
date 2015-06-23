@@ -1,0 +1,1 @@
+A program in c# attempting to simplify management of lots of digital classical music. It's only a personal project, as of now, thus it's not guaranteed to work ;)
